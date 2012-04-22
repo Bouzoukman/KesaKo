@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+List meta-data that is displayed in the Search page and in the Add-meta Page
+ -->
+<!-- 
+label: label of the meta-data for the interface.
+name: name of the meta-data. This name is the same as in the SOLR schema file.
+hmiPosition : position in the HMI. Two values are possible: left or right. No value indicates that the meta-data will not be displayed in a facet.
+isVisibleInMetaPanel : indicate if the meta-data is displayed in the meta-data Page. 
+						Two values are possible 0 (the meta-data is not displayed) 1 (the meta-data is displayed)
+ -->
+<metas>
+<!-- Following meta-data must not be deleted -->
+	<meta>
+		<label>Sources</label>
+		<name>folder_name</name>
+		<hmiPosition>left</hmiPosition>
+		<isVisibleInMetaPanel>0</isVisibleInMetaPanel>
+	</meta>
+	<meta>
+		<label>File Title</label>
+		<name>titre_f</name>
+		<hmiPosition></hmiPosition>
+		<isVisibleInMetaPanel>1</isVisibleInMetaPanel>
+		
+	</meta>
+	<meta>
+		<label>Document title</label>
+		<name>titre_doc</name>
+		<hmiPosition></hmiPosition>
+		<isVisibleInMetaPanel>1</isVisibleInMetaPanel>
+		
+	</meta>
+	<meta>
+		<label>Author</label>
+		<name>author_f</name>
+		<hmiPosition></hmiPosition>
+		<isVisibleInMetaPanel>1</isVisibleInMetaPanel>
+		
+	</meta>
+	<meta>
+		<label>Date</label>
+		<name>date</name>
+		<hmiPosition></hmiPosition>
+		<isVisibleInMetaPanel>1</isVisibleInMetaPanel>
+		
+	</meta>
+<!-- Beginning of the personal part -->
+	<meta>
+		<label>System Name</label>
+		<name>txt_systeme</name>
+		<hmiPosition>right</hmiPosition>
+		<isVisibleInMetaPanel>1</isVisibleInMetaPanel>
+		
+	</meta>
+</metas>

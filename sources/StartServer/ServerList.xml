@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<server>
+		<description>Start the SQL Server</description>
+		<workDir>/home/bouzoukman/workspace-java/SOLR-Package/package</workDir>
+		<command>java -cp lib/hsqldb.jar org.hsqldb.Server</command></server>
+	<server>
+		<description>Start the SOLR Server</description>
+		<workDir>/home/bouzoukman/workspace-java/SOLR-Package/package/SOLR</workDir>
+		<command>java -jar start.jar</command></server>
+</root>
