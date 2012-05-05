@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import kesako.utilities.Constant;
 import kesako.utilities.DBUtilities;
+import kesako.utilities.FileUtilities;
 import kesako.utilities.SOLRUtilities;
 
 import org.apache.log4j.Logger;
@@ -203,8 +204,7 @@ public class MetaFileProcess extends IntervalDBWork{
 
 			query="delete from t_metas where id_fichier="+idFichier;
 			DBUtilities.executeQuery(cn,query);
-			nomFicMeta=file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf('.'));
-			nomFicMeta=nomFicMeta+".meta";
+			nomFicMeta=FileUtilities.getFileMetaName(file.getAbsolutePath());
 			logger.debug("nomFicMeta="+nomFicMeta);
 			fileMeta=new File(nomFicMeta);
 			logger.debug("fileMeta : "+fileMeta.getAbsolutePath());

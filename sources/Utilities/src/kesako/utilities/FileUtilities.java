@@ -113,6 +113,6 @@ public class FileUtilities {
 	 */
 	public static String getFileMetaName(String nomFic){
 		String nomFicMeta=nomFic.substring(0,nomFic.lastIndexOf('.'));
-		return nomFicMeta=nomFicMeta+".meta";
+		return nomFicMeta=nomFicMeta+"_"+getExtension(nomFic)+".meta";
 	}
 }
