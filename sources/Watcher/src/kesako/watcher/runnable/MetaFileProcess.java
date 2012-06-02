@@ -271,7 +271,7 @@ public class MetaFileProcess extends IntervalDBWork{
 			if(date!=null){
 				Calendar c=Calendar.getInstance();
 				c.setTime(date);
-				query="update t_fichiers set dateextracted='"+c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH)+"' where id_fichier="+idFichier;
+				query="update t_fichiers set dateextracted='"+c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH)+"' where id_fichier="+idFichier;
 				DBUtilities.executeQuery(cn,query);
 			}
 			query="update t_fichiers set flag="+Constant.TO_INDEX+
