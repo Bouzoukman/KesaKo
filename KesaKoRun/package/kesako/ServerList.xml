@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<server>
+		<name>HSQLDB</name>
+		<description>Start the SQL Server</description>
+		<workDir>../SQL</workDir>
+		<command>java -cp hsqldb.jar org.hsqldb.Server</command></server>
+	<server>
+		<name>SOLR</name>
+		<description>Start the SOLR Server</description>
+		<workDir>../SOLR</workDir>
+		<command>java -jar start.jar</command></server>
+	<server>
+		<name>Watcher</name>
+		<description>Start the KesaKo Watcher Server</description>
+		<workDir>./</workDir>
+		<command>java -jar kesako-watcher-311F2.0.jar</command></server>
+</root>
