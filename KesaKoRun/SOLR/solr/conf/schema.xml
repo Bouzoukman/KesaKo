@@ -444,6 +444,12 @@
 		        <tokenizer class="solr.PathHierarchyTokenizerFactory"/>
 		      </analyzer>
 		    </fieldType>
+
+		    <fieldType name="meta_data" class="solr.TextField">
+		      <analyzer>
+		        <tokenizer class="solr.PatternTokenizerFactory" pattern="\s*[,;]\s*"/>
+		      </analyzer>
+		    </fieldType>
 		
 		    <!-- since fields of this type are by default not stored or indexed,
 		         any data added to them will be ignored outright.  --> 
@@ -534,6 +540,7 @@
 	
 	 <dynamicField name="txt_*" type="text_general" indexed="true" stored="true" multiValued="true"/>
 	 <dynamicField name="long_*" type="long" indexed="true" stored="true" multiValued="true"/>
+	 <dynamicField name="meta_*" type="meta_data" indexed="true" stored="true" multiValued="true"/>
 	 <!-- dynamicField name="*" type="text" multiValued="true"/-->
 		   <!-- Dynamic field definitions.  If a field name is not found, dynamicFields
 		        will be used if the name matches any of the patterns.
