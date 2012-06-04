@@ -197,6 +197,7 @@ public class AdminPanel extends JPanel{
 		bBrowse.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String separator=File.separator;
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			    int returnVal = chooser.showOpenDialog((Component)e.getSource());
@@ -204,7 +205,10 @@ public class AdminPanel extends JPanel{
 			    	logger.debug("Sélection répertoire : "+chooser.getSelectedFile().getAbsolutePath());
 			    	labSourcePath.setText(chooser.getSelectedFile().getAbsolutePath());
 			    	if(txtSourceName.getText().trim().equalsIgnoreCase("< name of the new source >")){
-			    		String[] temp=chooser.getSelectedFile().getAbsolutePath().split(File.separator);
+			    		if(separator=="\\"){
+			    			separator="\\\\";
+			    		}
+			    		String[] temp=chooser.getSelectedFile().getAbsolutePath().split(separator);
 			    		txtSourceName.setText(temp[temp.length-1]);
 			    	}
 			    }			
