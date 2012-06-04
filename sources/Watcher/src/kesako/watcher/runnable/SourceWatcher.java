@@ -160,7 +160,7 @@ public class SourceWatcher extends IntervalDBWork{
 						DBUtilities.getStringSQL(file.getName())+"','"+
 						DBUtilities.getStringSQL(file.getName())+"','',"+
 						file.lastModified()+",'"+
-						c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH)+"','"+
+						c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH)+"','"+
 						DBUtilities.getStringSQL(file.getAbsolutePath())+"',"+
 						Constant.TO_INDEX+","+
 						Constant.TO_EXTRACT_META+",0,'',"+Constant.PRIORITY_NEW_FILE+")";
@@ -177,7 +177,7 @@ public class SourceWatcher extends IntervalDBWork{
 								"TITRE_Doc='',"+
 								"author_f='',"+
 								"DATEMODIFIED="+file.lastModified()+","+
-								"DATEEXTRACTED='"+c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH)+"',"+
+								"DATEEXTRACTED='"+c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH)+"',"+
 								"FLAG="+Constant.TO_INDEX+","+
 								"flag_meta="+Constant.TO_EXTRACT_META+","+
 								"priority="+Constant.PRIORITY_MODIFIED_FILE+
