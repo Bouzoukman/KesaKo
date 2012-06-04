@@ -238,7 +238,9 @@ public class FacetPanel extends JPanel {
 			}
 		}
 		if(doSearch){
-			searchPanel.showResults(0,false);
+			//searchPanel.showResults(0,false);
+			//try to update facet when an item is selected
+			searchPanel.showResults(0,true);
 		}
 		logger.debug("Filter="+facetFilter+"|"+nbSelectedItem+"/"+nbFacetItem);
 	}
