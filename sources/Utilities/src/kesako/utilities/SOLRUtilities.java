@@ -49,7 +49,7 @@ public class SOLRUtilities {
 		logger.debug("SOLR URL : "+url);
 		try {
 			SOLRserver = new CommonsHttpSolrServer(url);
-			logger.debug(SOLRserver.commit());
+			logger.debug(SOLRserver.ping());
 		} catch (MalformedURLException e) {
 			logger.fatal(e);
 		} catch (SolrServerException e) {

@@ -108,7 +108,7 @@ public class Watcher {
 		boolean test=false;
 		while(!test){
 			try {
-				new CommonsHttpSolrServer(url).commit();
+				new CommonsHttpSolrServer(url).ping();
 				test=true;
 			} catch (MalformedURLException e) {
 				logger.fatal("BAD URL "+url,e);
