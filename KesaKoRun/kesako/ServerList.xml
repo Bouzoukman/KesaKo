@@ -19,7 +19,7 @@
 		<name>Index Watcher</name>
 		<description>Start the KesaKo Index Watcher Server</description>
 		<workDir>./</workDir>
-		<command>java -cp kesako-watcher-311F2.0.jar kesako.watcher.WatcherIndex</command></server>
+		<command>java -Xmx1024m -cp kesako-watcher-311F2.0.jar kesako.watcher.WatcherIndex</command></server>
 	<server>
 		<name>Meta Watcher</name>
 		<description>Start the KesaKo Meta Watcher Server</description>
