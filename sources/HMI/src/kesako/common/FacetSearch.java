@@ -15,7 +15,7 @@
  */
 package kesako.common;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,7 @@ public class FacetSearch {
 	/**
 	 * Vector that stores the results of the facet data
 	 */
-	private Map<String,Long> vData;
+	private LinkedHashMap<String,Long> vData;
 	/**
 	 * name of the meta-data corresponding to the facet
 	 */
@@ -58,16 +58,19 @@ public class FacetSearch {
 	 * Constant that indicates that an error occurred during the search.
 	 */
 	public static final int RESULT_ERROR=-1;
+	
+	public static final int COUNT=10;
+	public static final int ALPHABATICAL=11;
 
 	/**
 	 * Constructor of the FacetSearch object
 	 * @param metaDataName name of the meta-data corresponding to the facet
 	 */
 	public FacetSearch(String metaDataName){
-		vData=new HashMap<String,Long>();
+		vData=new LinkedHashMap<String,Long>();
 		this.metaDataName=metaDataName;
 	}
-	
+	//facet=true&facet.field=txt_systeme&facet.sort=count&facet.limit=-1
 	/**
 	 * Execute the research and update the data
 	 * @param query query of the research
@@ -78,7 +81,7 @@ public class FacetSearch {
 	 * <li>RESULT_ERROR: indicates that an error occurred during the search.</li>
 	 * </ul>
 	 */
-	public int doSearch(String query){
+	public int doSearch(String query,int order,int limit){
 		NamedList<String> q = new NamedList<String>();
 		q.add("fl", "file_uri");
 		if(query.trim().equals("")||query.trim().equalsIgnoreCase("AllDoc")){
@@ -90,7 +93,14 @@ public class FacetSearch {
 		q.add("start", "0");
 		q.add("facet","true");
 		q.add("facet.field",metaDataName);
-
+		if (order==COUNT){
+			q.add("facet.sort", "count");
+		}else{
+			if(order==ALPHABATICAL){
+				q.add("facet.sort", "index");
+			}
+		}
+		q.add("facet.limit",Integer.toString(limit));
 		logger.debug("query : "+q);
 		QueryResponse r;
 		String itemName;
@@ -113,6 +123,19 @@ public class FacetSearch {
 			return RESULT_ERROR;
 		}
 		return RESULTS;
+	}
+	/**
+	 * Execute the research and update the data
+	 * @param query query of the research
+	 * @return a flag that indicates the status.<br>
+	 * <ul>
+	 * <li>RESULTS: indicates that there is at least one result</li>
+	 * <li>NO_RESULT: indicates that there is no result.</li>
+	 * <li>RESULT_ERROR: indicates that an error occurred during the search.</li>
+	 * </ul>
+	 */
+	public int doSearch(String query){
+		return doSearch(query,COUNT,-1);
 	}
 	
 	/**

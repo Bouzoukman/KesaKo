@@ -21,10 +21,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
@@ -34,17 +32,8 @@ import javax.swing.border.TitledBorder;
 
 import kesako.common.FacetSearch;
 import kesako.hmi.SearchPanel;
-import kesako.utilities.SOLRUtilities;
 
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.FacetField.Count;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.util.NamedList;
-
-
-
 
 public class FacetPanel extends JPanel {
 	private static final long serialVersionUID = -4502384658374903402L;
@@ -65,7 +54,7 @@ public class FacetPanel extends JPanel {
 		this.setBorder(new TitledBorder(label));
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		//this.setUI(new FacetUI());
-		mFacet=new HashMap<String, FacetItem>();
+		mFacet=new LinkedHashMap<String, FacetItem>();
 		fS=new FacetSearch(facetName);
 		
 		c=new GridBagConstraints();
@@ -102,9 +91,8 @@ public class FacetPanel extends JPanel {
 
 	public void doSearch(String query,String filter){
 		boolean sAllState=sAll.isSelected();
-		TreeMap<String,FacetItem> mSortedFacet;
 		this.removeAll();
-		if(fS.doSearch(query)==FacetSearch.RESULTS){
+		if(fS.doSearch(query,FacetSearch.COUNT,-1)==FacetSearch.RESULTS){
 			c.gridx=0;
 			this.add(sAll,c);
 			this.add(sep,c);
@@ -113,7 +101,7 @@ public class FacetPanel extends JPanel {
 			facetFilter="";
 			int facetCount;
 			for(String key : fS.getData().keySet()){
-				logger.debug(key+" : "+fS.getData().get(key).intValue());
+				logger.debug("New Key "+key+" : "+fS.getData().get(key).intValue());
 				facetCount=fS.getData().get(key).intValue();
 				if(mFacet.containsKey(key)){
 					mFacet.get(key).setCount(facetCount);
@@ -121,24 +109,21 @@ public class FacetPanel extends JPanel {
 					mFacet.put(key,new FacetItem(key,facetCount,this));	
 				}
 			}
-			mSortedFacet=new TreeMap<String,FacetItem>(new FacetComparator(mFacet));
-			mSortedFacet.putAll(mFacet);
 			nbFacetItem=mFacet.size();
-			for(String key : mSortedFacet.keySet()){
-				this.add(mSortedFacet.get(key),c);
-				if(mSortedFacet.get(key).isSelected() || sAllState){
-					//addFilter(mSortedFacet.get(key).getLabel(),false);
-					mSortedFacet.get(key).setSelected(true);
+			for(String key : mFacet.keySet()){
+				this.add(mFacet.get(key),c);
+				if(mFacet.get(key).isSelected() || sAllState){
+					mFacet.get(key).setSelected(true);
 				}
-				if(mSortedFacet.get(key).getCount()==0){
-					mSortedFacet.get(key).setEnabled(false);
-					if(mSortedFacet.get(key).isSelected() || sAllState){
-						mSortedFacet.get(key).setSelected(false);
+				if(mFacet.get(key).getCount()==0){
+					mFacet.get(key).setEnabled(false);
+					if(mFacet.get(key).isSelected() || sAllState){
+						mFacet.get(key).setSelected(false);
 					}
 					nbFacetItem--;
 					logger.debug("New nbFacetItem="+nbFacetItem);
 				}else{
-					mSortedFacet.get(key).setEnabled(true);					
+					mFacet.get(key).setEnabled(true);					
 				}
 			}
 			if(nbFacetItem!=0){
@@ -150,76 +135,6 @@ public class FacetPanel extends JPanel {
 			}else{
 				sAll.setSelected(sAllState);
 			}
-		}
-	}
-	public void doSearchOld(String query){
-		NamedList<String> q = new NamedList<String>();
-		boolean sAllState=sAll.isSelected();
-		q.add("fl", "file_uri");
-		q.add("q", query);
-		q.add("rows", "1");
-		q.add("start", "0");
-		q.add("facet","true");
-		q.add("facet.field",facetName);
-
-		logger.debug("query : "+q);
-		QueryResponse r;
-		String facetName;
-		long facetCount;
-		TreeMap<String,FacetItem> mSortedFacet;
-		try {
-			r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q));
-			List<Count> lFI=r.getFacetFields().get(0).getValues();
-			this.removeAll();
-			if(lFI!=null){
-				c.gridx=0;
-				this.add(sAll,c);
-				this.add(sep,c);
-				nbFacetItem=0;
-				nbSelectedItem=0;
-				facetFilter="";
-				for(int i=0;i<lFI.size();i++){
-					logger.debug(lFI.get(i).getName()+" : "+lFI.get(i).getCount());
-					facetName=lFI.get(i).getName();
-					facetCount=lFI.get(i).getCount();
-					if(mFacet.containsKey(facetName)){
-						mFacet.get(facetName).setCount(facetCount);
-					}else{
-						mFacet.put(facetName,new FacetItem(facetName,facetCount,this));	
-					}
-				}
-				mSortedFacet=new TreeMap<String,FacetItem>(new FacetComparator(mFacet));
-				mSortedFacet.putAll(mFacet);
-				nbFacetItem=mFacet.size();
-				for(String key : mSortedFacet.keySet()){
-					this.add(mSortedFacet.get(key),c);
-					if(mSortedFacet.get(key).isSelected() || sAllState){
-						//addFilter(mSortedFacet.get(key).getLabel(),false);
-						mSortedFacet.get(key).setSelected(true);
-					}
-					if(mSortedFacet.get(key).getCount()==0){
-						mSortedFacet.get(key).setEnabled(false);
-						if(mSortedFacet.get(key).isSelected() || sAllState){
-							mSortedFacet.get(key).setSelected(false);
-						}
-						nbFacetItem--;
-						logger.debug("New nbFacetItem="+nbFacetItem);
-					}else{
-						mSortedFacet.get(key).setEnabled(true);					
-					}
-				}
-				if(nbFacetItem!=0){
-					if(nbSelectedItem==nbFacetItem){
-						sAll.setSelected(true);
-					}else{
-						sAll.setSelected(false);
-					}
-				}else{
-					sAll.setSelected(sAllState);
-				}
-			}
-		} catch (SolrServerException e) {
-			logger.fatal("doSearch",e);
 		}
 	}
 

@@ -21,7 +21,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Vector;
+import java.util.TreeSet;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,20 +32,19 @@ import kesako.common.Meta;
 
 import org.apache.log4j.Logger;
 
-
 public class MetaPanel extends JPanel{
 	private static final long serialVersionUID = -8668407800902178469L;
 	private static final Logger logger = Logger.getLogger(MetaPanel.class);
 	private JTextField txtMetaValue;
 	private Meta meta;
-	private Vector<String> values;
+	private TreeSet<String> values;
 	private AddMetaPanel parent;
 	private MetaPanel me;
 	
 	public MetaPanel (Meta meta,AddMetaPanel parent2,int flagColor){
 		logger.debug("Construction MetaPanel");
 		me=this;
-		values=new Vector<String>();
+		values=new TreeSet<String>();
 		this.parent=parent2;
 		this.meta=meta;
 		if(flagColor==1){
@@ -103,10 +102,10 @@ public class MetaPanel extends JPanel{
 	}
 
 	public void updateValues(){
-		values.removeAllElements();
+		values.clear();
 		if(!meta.getName().trim().equalsIgnoreCase("titre_f")&&!meta.getName().trim().equalsIgnoreCase("titre_doc")&&!meta.getName().trim().equalsIgnoreCase("author_f")&&!meta.getName().trim().equalsIgnoreCase("date")){
 			FacetSearch fS=new FacetSearch(meta.getName());
-			if(fS.doSearch("")==FacetSearch.RESULTS){
+			if(fS.doSearch("",FacetSearch.ALPHABATICAL,-1)==FacetSearch.RESULTS){
 				for(String key:fS.getData().keySet()){
 					values.add(key);
 					logger.debug("META value="+key);
