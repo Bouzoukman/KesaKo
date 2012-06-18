@@ -60,7 +60,7 @@ public class FacetSearch {
 	public static final int RESULT_ERROR=-1;
 	
 	public static final int COUNT=10;
-	public static final int ALPHABATICAL=11;
+	public static final int ALPHABETICAL=11;
 
 	/**
 	 * Constructor of the FacetSearch object
@@ -96,10 +96,11 @@ public class FacetSearch {
 		if (order==COUNT){
 			q.add("facet.sort", "count");
 		}else{
-			if(order==ALPHABATICAL){
+			if(order==ALPHABETICAL){
 				q.add("facet.sort", "index");
 			}
 		}
+		logger.debug("Facet order : "+order);
 		q.add("facet.limit",Integer.toString(limit));
 		logger.debug("query : "+q);
 		QueryResponse r;
@@ -108,6 +109,7 @@ public class FacetSearch {
 		try {
 			r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q));
 			List<Count> lFI=r.getFacetFields().get(0).getValues();
+			vData.clear();
 			if(lFI!=null){
 				for(int i=0;i<lFI.size();i++){
 					logger.debug(lFI.get(i).getName()+" : "+lFI.get(i).getCount());

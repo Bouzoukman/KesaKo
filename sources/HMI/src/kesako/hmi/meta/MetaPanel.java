@@ -105,7 +105,7 @@ public class MetaPanel extends JPanel{
 		values.clear();
 		if(!meta.getName().trim().equalsIgnoreCase("titre_f")&&!meta.getName().trim().equalsIgnoreCase("titre_doc")&&!meta.getName().trim().equalsIgnoreCase("author_f")&&!meta.getName().trim().equalsIgnoreCase("date")){
 			FacetSearch fS=new FacetSearch(meta.getName());
-			if(fS.doSearch("",FacetSearch.ALPHABATICAL,-1)==FacetSearch.RESULTS){
+			if(fS.doSearch("",FacetSearch.ALPHABETICAL,-1)==FacetSearch.RESULTS){
 				for(String key:fS.getData().keySet()){
 					values.add(key);
 					logger.debug("META value="+key);

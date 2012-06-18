@@ -18,6 +18,7 @@ package kesako.hmi.facet;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.border.TitledBorder;
@@ -41,6 +43,8 @@ public class FacetPanel extends JPanel {
 	private String facetName;
 	private String facetFilter;
 	private JCheckBox sAll;
+	private JPanel pTitle;
+	private JComboBox<String> cbSortOrder;
 	private int nbFacetItem;
 	private int nbSelectedItem;
 	private SearchPanel searchPanel;
@@ -49,18 +53,25 @@ public class FacetPanel extends JPanel {
 	private GridBagConstraints c;
 	private Map<String,FacetItem> mFacet;
 	private FacetSearch fS;
+	private String query;
+	private int limit;
+	private String filter;
 
 	public FacetPanel(String label, String facetName,SearchPanel sP){
 		this.setBorder(new TitledBorder(label));
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.setLayout(new GridBagLayout());
 		//this.setUI(new FacetUI());
 		mFacet=new LinkedHashMap<String, FacetItem>();
 		fS=new FacetSearch(facetName);
+		query="";
+		limit=-1;
+		filter="";
 		
 		c=new GridBagConstraints();
-		c.insets=new Insets(2,5,2,5);
-		c.ipadx=5;
-		c.ipady=5;
+		c.insets=new Insets(1,5,1,5);
+		//c.ipadx=5;
+		//c.ipady=5;
 		c.fill=GridBagConstraints.BOTH;
 		c.gridheight=1;
 		c.gridwidth=GridBagConstraints.REMAINDER;
@@ -71,6 +82,9 @@ public class FacetPanel extends JPanel {
 		this.facetFilter="";
 		this.searchPanel=sP;
 		this.label=label;
+		
+		this.pTitle=new JPanel();
+		this.pTitle.setLayout(new BoxLayout(this.pTitle, BoxLayout.X_AXIS));
 		sAll = new JCheckBox("SelectAll");
 		sAll.addActionListener(new ActionListener(){
 			@Override
@@ -86,20 +100,45 @@ public class FacetPanel extends JPanel {
 				searchPanel.showResults(0,false);
 			}
 		});
+		pTitle.add(sAll);
+		cbSortOrder=new JComboBox<String>();
+		cbSortOrder.addItem("Count");
+		cbSortOrder.addItem("Alphabetical");
+		cbSortOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				@SuppressWarnings("unchecked")
+				JComboBox<String> cb=(JComboBox<String>)arg0.getSource();
+				String selected=cb.getSelectedItem().toString();
+				logger.debug("Sortorder selected : "+selected);
+				if(selected.equalsIgnoreCase("Count")){
+					doSearch(query,filter,FacetSearch.COUNT,limit);
+				}else{
+					if(selected.equalsIgnoreCase("Alphabetical")){
+						doSearch(query,filter,FacetSearch.ALPHABETICAL,limit);
+					}					
+				}
+				paintAll(getGraphics());
+			}
+		});
+		
+		pTitle.add(cbSortOrder);
 		sep=new JSeparator();
 	}
 
-	public void doSearch(String query,String filter){
+	public void doSearch(String query,String filter,int facetOrder,int limit){
 		boolean sAllState=sAll.isSelected();
 		this.removeAll();
-		if(fS.doSearch(query,FacetSearch.COUNT,-1)==FacetSearch.RESULTS){
+		this.query=query;
+		this.filter=filter;
+		if(fS.doSearch(query,facetOrder,limit)==FacetSearch.RESULTS){
 			c.gridx=0;
-			this.add(sAll,c);
+			this.add(pTitle,c);
 			this.add(sep,c);
 			nbFacetItem=0;
 			nbSelectedItem=0;
 			facetFilter="";
 			int facetCount;
+			mFacet.clear();
 			for(String key : fS.getData().keySet()){
 				logger.debug("New Key "+key+" : "+fS.getData().get(key).intValue());
 				facetCount=fS.getData().get(key).intValue();
@@ -136,6 +175,9 @@ public class FacetPanel extends JPanel {
 				sAll.setSelected(sAllState);
 			}
 		}
+	}
+	public void doSearch(String query,String filter){
+		this.doSearch(query, filter, FacetSearch.COUNT, -1);
 	}
 
 	public void addFilter(String value,boolean doSearch){
