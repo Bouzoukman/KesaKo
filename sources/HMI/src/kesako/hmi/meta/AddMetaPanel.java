@@ -90,6 +90,7 @@ public class AddMetaPanel extends JPanel{
 	 * Choose file button
 	 */
 	private JPanel jpChooseFile;
+	private File initialDirectory;
 
 
 
@@ -101,6 +102,7 @@ public class AddMetaPanel extends JPanel{
 	public AddMetaPanel (){
 		logger.debug("Construction AddMetaPanel");
 		this.setLayout(new BorderLayout());
+		this.initialDirectory=null;
 
 		try {
 			Document doc=XMLUtilities.getXMLDocument("meta.xml");
@@ -122,9 +124,13 @@ public class AddMetaPanel extends JPanel{
 				public void mouseClicked(MouseEvent e) {
 					@SuppressWarnings("unchecked")
 					JList<String> jL=(JList<String>)e.getSource();
-					String temp = selectedMetaPanel.getMetaValue();
+					String temp = selectedMetaPanel.getMetaValue().trim();
 					if(!temp.toLowerCase().contains(jL.getSelectedValue().toLowerCase())){
-						selectedMetaPanel.setMetaValue(temp+" "+jL.getSelectedValue());
+						if(temp.equals("")){
+							selectedMetaPanel.setMetaValue(jL.getSelectedValue());
+						}else{
+							selectedMetaPanel.setMetaValue(temp+", "+jL.getSelectedValue());
+						}
 					}
 				}
 
@@ -197,12 +203,10 @@ public class AddMetaPanel extends JPanel{
 					for(int i=0; i<fileName.length;i++){
 						logger.debug(i+" : "+fileName[i]);
 						File f=new File(fileName[i].trim());
-						//TODO vérifier si problème existance du fichier
 						if(f.exists()){
 							saveMetaXML(FileUtilities.getFileMetaName(fileName[i].trim()));
 						}
 					}
-
 					drawInit();
 				}
 			});
@@ -237,9 +241,11 @@ public class AddMetaPanel extends JPanel{
 							return "Indexable File";
 						}
 					});
+					chooser.setCurrentDirectory(initialDirectory);
 					int returnVal = chooser.showOpenDialog((Component)e.getSource());
 					if(returnVal == JFileChooser.APPROVE_OPTION) {
 						String paths="";
+						initialDirectory=chooser.getCurrentDirectory();
 						for(int i=0;i<chooser.getSelectedFiles().length;i++){
 							logger.debug("Sélection fichier : "+chooser.getSelectedFiles()[i].getAbsolutePath());
 							if(i>0){
@@ -305,7 +311,7 @@ public class AddMetaPanel extends JPanel{
 								}
 							}
 							logger.debug("nomMeta : "+nomMeta+", value="+valueMeta);
-							if(vMetaPanels.containsKey(nomMeta)&&vMetaPanels.get(nomMeta).getMetaValue().equals("")){
+							if(vMetaPanels.containsKey(nomMeta)){
 								vMetaPanels.get(nomMeta).setMetaValue(valueMeta);
 							}
 						}
