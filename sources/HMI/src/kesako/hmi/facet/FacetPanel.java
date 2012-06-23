@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
@@ -41,37 +42,34 @@ public class FacetPanel extends JPanel {
 	private static final long serialVersionUID = -4502384658374903402L;
 	private static final Logger logger = Logger.getLogger(FacetPanel.class);
 	private String facetName;
-	private String facetFilter;
 	private JCheckBox sAll;
 	private JPanel pTitle;
 	private JComboBox<String> cbSortOrder;
 	private int nbFacetItem;
 	private int nbSelectedItem;
 	private SearchPanel searchPanel;
-	private String label;
 	private JSeparator sep;
 	private GridBagConstraints c;
 	private Map<String,FacetItem> mFacet;
+	private Vector<String> selectedFacet;
 	private FacetSearch fS;
 	private String query;
 	private int limit;
-	private String filter;
+	private String facetFilter;
 
 	public FacetPanel(String label, String facetName,SearchPanel sP){
 		this.setBorder(new TitledBorder(label));
-		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setLayout(new GridBagLayout());
-		//this.setUI(new FacetUI());
+
 		mFacet=new LinkedHashMap<String, FacetItem>();
+		selectedFacet=new Vector<String>();
 		fS=new FacetSearch(facetName);
 		query="";
 		limit=-1;
-		filter="";
+		facetFilter="";
 		
 		c=new GridBagConstraints();
 		c.insets=new Insets(1,5,1,5);
-		//c.ipadx=5;
-		//c.ipady=5;
 		c.fill=GridBagConstraints.BOTH;
 		c.gridheight=1;
 		c.gridwidth=GridBagConstraints.REMAINDER;
@@ -79,9 +77,7 @@ public class FacetPanel extends JPanel {
 		c.weightx=1;
 
 		this.facetName=facetName;
-		this.facetFilter="";
 		this.searchPanel=sP;
-		this.label=label;
 		
 		this.pTitle=new JPanel();
 		this.pTitle.setLayout(new BoxLayout(this.pTitle, BoxLayout.X_AXIS));
@@ -97,7 +93,7 @@ public class FacetPanel extends JPanel {
 						((JCheckBox)c).setSelected(test);
 					}
 				}
-				searchPanel.showResults(0,false);
+				searchPanel.showResults(0,true);
 			}
 		});
 		pTitle.add(sAll);
@@ -111,10 +107,10 @@ public class FacetPanel extends JPanel {
 				String selected=cb.getSelectedItem().toString();
 				logger.debug("Sortorder selected : "+selected);
 				if(selected.equalsIgnoreCase("Count")){
-					doSearch(query,filter,FacetSearch.COUNT,limit);
+					showResults(query,searchPanel.getFilter(),FacetSearch.COUNT,limit);
 				}else{
 					if(selected.equalsIgnoreCase("Alphabetical")){
-						doSearch(query,filter,FacetSearch.ALPHABETICAL,limit);
+						showResults(query,searchPanel.getFilter(),FacetSearch.INDEX,limit);
 					}					
 				}
 				paintAll(getGraphics());
@@ -125,36 +121,44 @@ public class FacetPanel extends JPanel {
 		sep=new JSeparator();
 	}
 
-	public void doSearch(String query,String filter,int facetOrder,int limit){
+	public void showResults(String query,String filter,int facetOrder,int limit){
 		boolean sAllState=sAll.isSelected();
 		this.removeAll();
 		this.query=query;
-		this.filter=filter;
-		if(fS.doSearch(query,facetOrder,limit)==FacetSearch.RESULTS){
+		nbSelectedItem=0;
+		//save the name of selected items
+		this.selectedFacet.clear();
+		for(String key : mFacet.keySet()){
+			if(mFacet.get(key).isSelected()){
+				selectedFacet.add(key);
+			}
+		}
+		nbSelectedItem=selectedFacet.size();
+		logger.debug("Nb selected item="+nbSelectedItem);
+		if(fS.doSearch(query,filter,facetOrder,limit)==FacetSearch.RESULTS){
 			c.gridx=0;
 			this.add(pTitle,c);
 			this.add(sep,c);
 			nbFacetItem=0;
-			nbSelectedItem=0;
-			facetFilter="";
 			int facetCount;
+			//constitution of the list of facet items
 			mFacet.clear();
 			for(String key : fS.getData().keySet()){
 				logger.debug("New Key "+key+" : "+fS.getData().get(key).intValue());
 				facetCount=fS.getData().get(key).intValue();
-				if(mFacet.containsKey(key)){
-					mFacet.get(key).setCount(facetCount);
-				}else{
-					mFacet.put(key,new FacetItem(key,facetCount,this));	
-				}
+				mFacet.put(key,new FacetItem(key,facetCount,this));	
 			}
 			nbFacetItem=mFacet.size();
+			logger.debug("Nb facet="+nbFacetItem);
+			
+			//display facet items
 			for(String key : mFacet.keySet()){
 				this.add(mFacet.get(key),c);
-				if(mFacet.get(key).isSelected() || sAllState){
+				if(selectedFacet.contains(key) || sAllState){
 					mFacet.get(key).setSelected(true);
 				}
 				if(mFacet.get(key).getCount()==0){
+					logger.debug(key + " - Facetcount =0");
 					mFacet.get(key).setEnabled(false);
 					if(mFacet.get(key).isSelected() || sAllState){
 						mFacet.get(key).setSelected(false);
@@ -176,61 +180,40 @@ public class FacetPanel extends JPanel {
 			}
 		}
 	}
-	public void doSearch(String query,String filter){
-		this.doSearch(query, filter, FacetSearch.COUNT, -1);
-	}
 
 	public void addFilter(String value,boolean doSearch){
 		if(!facetFilter.contains(value)){
-			nbSelectedItem++;
-			if(nbSelectedItem==nbFacetItem){
-				sAll.setSelected(true);
-			}else{
-				sAll.setSelected(false);
-			}
 			if(facetFilter.trim().equals("")){
 				facetFilter=facetName+":\""+value+"\"";
 			}else{
 				facetFilter+=" "+facetName+":\""+value+"\"";
 			}
+			searchPanel.updateFilter();
 		}
 		if(doSearch){
 			//searchPanel.showResults(0,false);
 			//try to update facet when an item is selected
 			searchPanel.showResults(0,true);
 		}
-		logger.debug("Filter="+facetFilter+"|"+nbSelectedItem+"/"+nbFacetItem);
+		logger.debug("AddFilter="+facetFilter+"|"+nbSelectedItem+"/"+nbFacetItem);
 	}
 
 	public void removeFilter(String value,boolean doSearch){
-		nbSelectedItem--;
 		sAll.setSelected(false);
 		String regex="\\s*"+facetName+"\\:\""+value+"\"";
 		logger.debug("regex : "+regex);
 		facetFilter=facetFilter.replaceAll(regex, "").trim();
-		logger.debug("Filter="+facetFilter+"|"+nbSelectedItem+"/"+nbFacetItem);
+		logger.debug("RemoveFilter="+facetFilter+"|"+nbSelectedItem+"/"+nbFacetItem+" | ");
+		searchPanel.updateFilter();
 		if(doSearch){
-			searchPanel.showResults(0,false);
+			searchPanel.showResults(0,true);
 		}
 	}
 
-	public void init(boolean isSelected){
-		Component c;
-		this.doSearch("*:*","");	
-		sAll.setSelected(isSelected);
-		for(int i=0; i<getComponents().length;i++){
-			c=getComponents()[i];
-			if(c instanceof FacetItem){
-				((JCheckBox)c).setSelected(isSelected);
-			}
-		}
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
+	/**
+	 * @return the facetFilter
+	 */
 	public String getFacetFilter() {
-		return facetFilter;
+		return this.facetFilter;
 	}
 }

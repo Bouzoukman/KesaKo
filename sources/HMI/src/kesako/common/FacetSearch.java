@@ -60,7 +60,7 @@ public class FacetSearch {
 	public static final int RESULT_ERROR=-1;
 	
 	public static final int COUNT=10;
-	public static final int ALPHABETICAL=11;
+	public static final int INDEX=11;
 
 	/**
 	 * Constructor of the FacetSearch object
@@ -70,10 +70,17 @@ public class FacetSearch {
 		vData=new LinkedHashMap<String,Long>();
 		this.metaDataName=metaDataName;
 	}
-	//facet=true&facet.field=txt_systeme&facet.sort=count&facet.limit=-1
 	/**
 	 * Execute the research and update the data
 	 * @param query query of the research
+	 * @param filter filter of the research
+	 * @param order order of the facet's items. <br>
+	 * Two values are accepted:
+	 * <ul>
+	 * <li>COUNT=10 : items are sorted by count</li>
+	 * <li>INDEX=11 : items are sorted in index order. For ASCII data, it's alphabetic order.</li>
+	 * </ul>
+	 * @param limit : number of items to display. If limit < 0, all items are displayed.
 	 * @return a flag that indicates the status.<br>
 	 * <ul>
 	 * <li>RESULTS: indicates that there is at least one result</li>
@@ -81,7 +88,7 @@ public class FacetSearch {
 	 * <li>RESULT_ERROR: indicates that an error occurred during the search.</li>
 	 * </ul>
 	 */
-	public int doSearch(String query,int order,int limit){
+	public int doSearch(String query,String filter,int order,int limit){
 		NamedList<String> q = new NamedList<String>();
 		q.add("fl", "file_uri");
 		if(query.trim().equals("")||query.trim().equalsIgnoreCase("AllDoc")){
@@ -89,19 +96,23 @@ public class FacetSearch {
 		}else{
 			q.add("q",query.trim());
 		}
-		q.add("rows", "1");
+		q.add("rows", "0");
 		q.add("start", "0");
 		q.add("facet","true");
 		q.add("facet.field",metaDataName);
 		if (order==COUNT){
 			q.add("facet.sort", "count");
 		}else{
-			if(order==ALPHABETICAL){
+			if(order==INDEX){
 				q.add("facet.sort", "index");
 			}
 		}
 		logger.debug("Facet order : "+order);
 		q.add("facet.limit",Integer.toString(limit));
+		if(!filter.trim().equals("")){
+			q.add("fq",filter.trim());
+		}
+
 		logger.debug("query : "+q);
 		QueryResponse r;
 		String itemName;
@@ -125,19 +136,6 @@ public class FacetSearch {
 			return RESULT_ERROR;
 		}
 		return RESULTS;
-	}
-	/**
-	 * Execute the research and update the data
-	 * @param query query of the research
-	 * @return a flag that indicates the status.<br>
-	 * <ul>
-	 * <li>RESULTS: indicates that there is at least one result</li>
-	 * <li>NO_RESULT: indicates that there is no result.</li>
-	 * <li>RESULT_ERROR: indicates that an error occurred during the search.</li>
-	 * </ul>
-	 */
-	public int doSearch(String query){
-		return doSearch(query,COUNT,-1);
 	}
 	
 	/**

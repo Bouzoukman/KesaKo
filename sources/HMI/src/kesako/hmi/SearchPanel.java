@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.xml.parsers.ParserConfigurationException;
 
+import kesako.common.FacetSearch;
 import kesako.common.Meta;
 import kesako.common.ResultDoc;
 import kesako.common.Search;
@@ -110,7 +111,11 @@ public class SearchPanel extends JPanel {
 	/**
 	 * Variable to store the sorting string that will be used by the search object to sort results.
 	 */
-	private String sortingString="";
+	private String sortingString;
+	/**
+	 * Variable to store the filter string that will be used by the Search object and the FacetSaerch object to filter the results.
+	 */
+	private String filter;
 	/**
 	 * search object that make the interface with the SOLR engine to retrieve results.
 	 */
@@ -130,6 +135,9 @@ public class SearchPanel extends JPanel {
 	 */
 	public SearchPanel(){
 		boolean testRightFacet=false;
+		this.sortingString="";
+		this.filter="";
+		
 		vFPanel=new Vector<FacetPanel>();
 		search=new Search();
 		vDoc=search.getDocs();
@@ -184,12 +192,12 @@ public class SearchPanel extends JPanel {
 				fp=new FacetPanel(m.getLabel(),m.getName(),this);
 				if(m.getHMIPosition().equalsIgnoreCase("left")){
 					leftFacetPanel.add(fp);
-					fp.init(false);
+					fp.showResults("",filter,FacetSearch.COUNT,-1);
 					vFPanel.add(fp);
 				}else{
 					if(m.getHMIPosition().equalsIgnoreCase("right")){
 						rightFacetPanel.add(fp);
-						fp.init(false);
+						fp.showResults("",filter,FacetSearch.COUNT,-1);
 						vFPanel.add(fp);
 						testRightFacet=true;
 					}
@@ -276,7 +284,6 @@ public class SearchPanel extends JPanel {
 	public void showResults(int startIndex,boolean updateFacet,boolean initSorting){
 		long begin,end;
 		String query=txtQuery.getText().trim();
-		String filter="";
 		tableData.clearSelection();
 		if(query.equals("")||query.equalsIgnoreCase("AllDoc")){
 			query="*:*";
@@ -284,7 +291,6 @@ public class SearchPanel extends JPanel {
 		if(initSorting){
 			sortingString="score desc";
 		}
-		boolean isFirst=true;
 		begin=startIndex+1;
 		if(startIndex>=20){
 			prevIndex=startIndex-20;
@@ -292,17 +298,8 @@ public class SearchPanel extends JPanel {
 		}else{
 			bPrev.setEnabled(false);
 		}
-		for(int i=0;i<vFPanel.size();i++){
-			if(!vFPanel.get(i).getFacetFilter().trim().equals("")){
-				if(isFirst){
-					filter="("+vFPanel.get(i).getFacetFilter()+")";
-					isFirst=false;
-				}else{
-					filter+=" AND ("+vFPanel.get(i).getFacetFilter()+")";
-				}
-			}
-		}
-		if(search.doSearch(query, sortingString, filter, startIndex, initSorting)>0){
+		this.updateFilter();
+		if(search.doSearch(query,filter, sortingString,startIndex)>0){
 			if(startIndex+20<search.getNbFound()){
 				end=startIndex+20;
 				nextIndex=startIndex+20;
@@ -320,7 +317,7 @@ public class SearchPanel extends JPanel {
 
 		if(updateFacet){
 			for(int i=0;i<vFPanel.size();i++){
-				vFPanel.get(i).doSearch(query,filter);
+				vFPanel.get(i).showResults(query,filter,FacetSearch.COUNT,-1);
 			}
 		}
 		paintAll(getGraphics());
@@ -335,10 +332,31 @@ public class SearchPanel extends JPanel {
 		return searchButton;
 	}
 	/**
-	 * Update de sorting string.
+	 * Update the sorting string.
 	 * @param sortingString the new value of the sorting string.
 	 */
 	public void setSortingString(String sortingString) {
 		this.sortingString = sortingString;
+	}
+
+	public void updateFilter(){
+		filter="";
+		boolean isFirst=true;
+		for(int i=0;i<vFPanel.size();i++){
+			if(!vFPanel.get(i).getFacetFilter().trim().equals("")){
+				if(isFirst){
+					filter="("+vFPanel.get(i).getFacetFilter()+")";
+					isFirst=false;
+				}else{
+					filter+=" AND ("+vFPanel.get(i).getFacetFilter()+")";
+				}
+			}
+		}
+	}
+	/**
+	 * @return the filter
+	 */
+	public String getFilter() {
+		return this.filter;
 	}
 }

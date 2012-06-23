@@ -72,13 +72,12 @@ public class Search {
 	 * Make a research. Return the status of the search and store the results in vDoc.<br>
 	 * The syntax of the different parameters is the SOLR syntax.
 	 * @param query query-string of the research
-	 * @param sortingString string to sort results
+	 * @param sortingString string to sort results. If sortingString is empty or null, the default sort order (by date) is done. 
 	 * @param filter implementation of the facet mechanism
 	 * @param start The method doSearch return 20 results beginning from start to start+20 or nbFound if nbFound < start+20
-	 * @param initSorting if initSorting=TRUE, results are sorted by date
 	 * @return RESULTS if there is results, NO_RESULT if there is no result, RESULT_ERROR if an error occurs during the search
 	 */
-	public int doSearch(String query,String sortingString,String filter, int start,boolean initSorting){
+	public int doSearch(String query,String filter, String sortingString,int start){
 		NamedList<String> q = new NamedList<String>();
 		String sortingString2;
 		if(query.trim().equals("")||query.trim().equalsIgnoreCase("AllDoc")){
@@ -91,11 +90,7 @@ public class Search {
 		q.add("start", Integer.toString(start));
 		q.add("hl", "on");
 		q.add("hl.fl","text");
-		if(initSorting){
-			sortingString2="score desc";
-		}else{
-			sortingString2=sortingString.trim();
-		}
+		sortingString2=sortingString.trim();
 		if(!sortingString2.equals("")){
 			q.add("sort", sortingString2);
 		}else{
@@ -121,6 +116,7 @@ public class Search {
 			r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q));
 			listDoc=r.getResults();
 			nbFound=listDoc.getNumFound();
+			logger.debug("Nb Results : "+nbFound);
 			Map<String,Map<String,List<String>>> listHighlight=r.getHighlighting();
 			vDoc.removeAllElements();
 			if(listDoc.size()>0){

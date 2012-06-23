@@ -32,7 +32,7 @@ public class FacetItem extends JCheckBox {
 
 	public FacetItem(String label2,long number,FacetPanel fP){
 		super(label2+" ("+number+")");
-		logger.debug("Creation :"+label2);
+		logger.debug("Creation :"+label2+" | "+number);
 		this.label=label2;
 		this.count=number;
 		this.facetPanel=fP;
