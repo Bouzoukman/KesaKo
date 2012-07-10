@@ -30,11 +30,15 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.InputVerifier;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
@@ -176,6 +180,10 @@ public class AddMetaPanel extends JPanel{
 				meta=new Meta(item);
 				if(meta.isVisibleInMetaPanel()){
 					mp=new MetaPanel(meta,this,nbMeta%2);
+					if(meta.getName().trim().equalsIgnoreCase("date")){
+						mp.setInputVerifier(new DateVerifier());
+						mp.setDefaultValue("yyyy-mm-dd");
+					}
 					vMetaPanels.put(meta.getName(), mp);
 					vMetas.add(meta);
 					jpMeta.add(mp,cMeta);
@@ -312,7 +320,11 @@ public class AddMetaPanel extends JPanel{
 							}
 							logger.debug("nomMeta : "+nomMeta+", value="+valueMeta);
 							if(vMetaPanels.containsKey(nomMeta)){
-								vMetaPanels.get(nomMeta).setMetaValue(valueMeta);
+								if(!valueMeta.trim().equals("")){
+									vMetaPanels.get(nomMeta).setMetaValue(valueMeta);
+								}else{
+									vMetaPanels.get(nomMeta).setMetaValue(vMetaPanels.get(nomMeta).getDefaultValue());
+								}
 							}
 						}
 					}
@@ -377,5 +389,21 @@ public class AddMetaPanel extends JPanel{
 
 	public void setSelectedMetaPanel(MetaPanel selectedMetaPanel) {
 		this.selectedMetaPanel = selectedMetaPanel;
+	}
+	
+	private class DateVerifier extends InputVerifier{
+		@Override
+		public boolean verify(JComponent input) {
+			JTextField tf = (JTextField) input;
+			String dateTxt=tf.getText().trim();
+			boolean valid=dateTxt.matches("\\d{4}-\\d{2}-\\d{2}");
+			if(!valid && !dateTxt.trim().equals("") && !dateTxt.trim().equalsIgnoreCase("yyyy-mm-dd")){
+				JOptionPane.showMessageDialog(input, "The date is in the wrong format.\n The format is yyyy-mm-dd","Date Format Error", JOptionPane.ERROR_MESSAGE);
+			}else{
+				valid=true;
+			}
+			return valid;
+		}
+		
 	}
 }

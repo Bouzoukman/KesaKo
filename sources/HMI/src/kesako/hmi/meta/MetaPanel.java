@@ -23,6 +23,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.TreeSet;
 
+import javax.swing.InputVerifier;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -40,9 +41,11 @@ public class MetaPanel extends JPanel{
 	private TreeSet<String> values;
 	private AddMetaPanel parent;
 	private MetaPanel me;
+	private String defaultValue;
 	
 	public MetaPanel (Meta meta,AddMetaPanel parent2,int flagColor){
 		logger.debug("Construction MetaPanel");
+		defaultValue="< meta value >";
 		me=this;
 		values=new TreeSet<String>();
 		this.parent=parent2;
@@ -72,7 +75,7 @@ public class MetaPanel extends JPanel{
 		txtMetaValue.addFocusListener(new FocusListener(){
 			@Override
 			public void focusGained(FocusEvent e) {
-				if(((JTextField)e.getSource()).getText().trim().equalsIgnoreCase("< meta value >")){
+				if(((JTextField)e.getSource()).getText().trim().equalsIgnoreCase(defaultValue)){
 					((JTextField)e.getSource()).setText("");
 				}				
 				parent.getMetaValues().removeAllElements();
@@ -83,7 +86,7 @@ public class MetaPanel extends JPanel{
 			@Override
 			public void focusLost(FocusEvent e) {
 				if(((JTextField)e.getSource()).getText().trim().equalsIgnoreCase("")){
-					((JTextField)e.getSource()).setText("< meta value >");
+					((JTextField)e.getSource()).setText(defaultValue);
 				}
 			}
 		});
@@ -92,7 +95,7 @@ public class MetaPanel extends JPanel{
 	
 	public String getMetaValue() {
 		String value="";
-		if(!txtMetaValue.getText().trim().equalsIgnoreCase("< meta value >")){
+		if(!txtMetaValue.getText().trim().equalsIgnoreCase(defaultValue)){
 			value=txtMetaValue.getText().trim();
 		}						
 		return value;
@@ -113,5 +116,23 @@ public class MetaPanel extends JPanel{
 				}
 			}
 		}
+	}
+	public void setInputVerifier(InputVerifier iv){
+		txtMetaValue.setInputVerifier(iv);
+		
+	}
+
+	/**
+	 * @param defaultValue the defaultValue to set
+	 */
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	/**
+	 * @return the defaultValue
+	 */
+	public String getDefaultValue() {
+		return this.defaultValue;
 	}
 }
