@@ -52,6 +52,7 @@ public class FacetPanel extends JPanel {
 	private GridBagConstraints c;
 	private Map<String,FacetItem> mFacet;
 	private Vector<String> selectedFacet;
+	private String selectedSortOrder;
 	private FacetSearch fS;
 	private String query;
 	private int limit;
@@ -63,6 +64,7 @@ public class FacetPanel extends JPanel {
 
 		mFacet=new LinkedHashMap<String, FacetItem>();
 		selectedFacet=new Vector<String>();
+		selectedSortOrder="Count";
 		fS=new FacetSearch(facetName);
 		query="";
 		limit=-1;
@@ -104,12 +106,12 @@ public class FacetPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				@SuppressWarnings("unchecked")
 				JComboBox<String> cb=(JComboBox<String>)arg0.getSource();
-				String selected=cb.getSelectedItem().toString();
-				logger.debug("Sortorder selected : "+selected);
-				if(selected.equalsIgnoreCase("Count")){
+				selectedSortOrder=cb.getSelectedItem().toString();
+				logger.debug("Sortorder selected : "+selectedSortOrder);
+				if(selectedSortOrder.equalsIgnoreCase("Count")){
 					showResults(query,searchPanel.getFilter(),FacetSearch.COUNT,limit);
 				}else{
-					if(selected.equalsIgnoreCase("Alphabetical")){
+					if(selectedSortOrder.equalsIgnoreCase("Alphabetical")){
 						showResults(query,searchPanel.getFilter(),FacetSearch.INDEX,limit);
 					}					
 				}
@@ -133,6 +135,8 @@ public class FacetPanel extends JPanel {
 				selectedFacet.add(key);
 			}
 		}
+		cbSortOrder.setSelectedItem(selectedSortOrder);
+
 		nbSelectedItem=selectedFacet.size();
 		logger.debug("Nb selected item="+nbSelectedItem);
 		if(fS.doSearch(query,filter,facetOrder,limit)==FacetSearch.RESULTS){
