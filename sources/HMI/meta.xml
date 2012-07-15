@@ -48,7 +48,7 @@ isVisibleInMetaPanel : indicate if the meta-data is displayed in the meta-data P
 <!-- Beginning of the personal part -->
 	<meta>
 		<label>System Name</label>
-		<name>txt_systeme</name>
+		<name>meta_systeme</name>
 		<hmiPosition>right</hmiPosition>
 		<isVisibleInMetaPanel>1</isVisibleInMetaPanel>
 		
