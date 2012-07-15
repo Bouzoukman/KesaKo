@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -125,6 +126,7 @@ public class FacetPanel extends JPanel {
 
 	public void showResults(String query,String filter,int facetOrder,int limit){
 		boolean sAllState=sAll.isSelected();
+		Map<String,FacetItem> mSortedFacet;
 		this.removeAll();
 		this.query=query;
 		nbSelectedItem=0;
@@ -135,7 +137,6 @@ public class FacetPanel extends JPanel {
 				selectedFacet.add(key);
 			}
 		}
-		cbSortOrder.setSelectedItem(selectedSortOrder);
 
 		nbSelectedItem=selectedFacet.size();
 		logger.debug("Nb selected item="+nbSelectedItem);
@@ -154,8 +155,38 @@ public class FacetPanel extends JPanel {
 			}
 			nbFacetItem=mFacet.size();
 			logger.debug("Nb facet="+nbFacetItem);
+			if(selectedSortOrder.equalsIgnoreCase("Count")){
+				cbSortOrder.setSelectedIndex(0);
+				mSortedFacet=mFacet;
+			}else{
+				if(selectedSortOrder.equalsIgnoreCase("Alphabetical")){
+					cbSortOrder.setSelectedIndex(1);
+					mSortedFacet=new TreeMap<String,FacetItem>(new FacetAlphabeticalComparator());
+					mSortedFacet.putAll(mFacet);
+				}else{
+					mSortedFacet=null;
+				}
+			}
 			
 			//display facet items
+			for(String key : mSortedFacet.keySet()){
+				this.add(mSortedFacet.get(key),c);
+				if(selectedFacet.contains(key) || sAllState){
+					mSortedFacet.get(key).setSelected(true);
+				}
+				if(mSortedFacet.get(key).getCount()==0){
+					logger.debug(key + " - Facetcount =0");
+					mSortedFacet.get(key).setEnabled(false);
+					if(mSortedFacet.get(key).isSelected() || sAllState){
+						mSortedFacet.get(key).setSelected(false);
+					}
+					nbFacetItem--;
+					logger.debug("New nbFacetItem="+nbFacetItem);
+				}else{
+					mSortedFacet.get(key).setEnabled(true);					
+				}
+			}
+			/*
 			for(String key : mFacet.keySet()){
 				this.add(mFacet.get(key),c);
 				if(selectedFacet.contains(key) || sAllState){
@@ -172,7 +203,7 @@ public class FacetPanel extends JPanel {
 				}else{
 					mFacet.get(key).setEnabled(true);					
 				}
-			}
+			}*/
 			if(nbFacetItem!=0){
 				if(nbSelectedItem==nbFacetItem){
 					sAll.setSelected(true);
