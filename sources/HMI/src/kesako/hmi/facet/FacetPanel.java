@@ -135,6 +135,7 @@ public class FacetPanel extends JPanel {
 		for(String key : mFacet.keySet()){
 			if(mFacet.get(key).isSelected()){
 				selectedFacet.add(key);
+				logger.debug("item "+key+" is selected");
 			}
 		}
 
@@ -156,11 +157,9 @@ public class FacetPanel extends JPanel {
 			nbFacetItem=mFacet.size();
 			logger.debug("Nb facet="+nbFacetItem);
 			if(selectedSortOrder.equalsIgnoreCase("Count")){
-				cbSortOrder.setSelectedIndex(0);
 				mSortedFacet=mFacet;
 			}else{
 				if(selectedSortOrder.equalsIgnoreCase("Alphabetical")){
-					cbSortOrder.setSelectedIndex(1);
 					mSortedFacet=new TreeMap<String,FacetItem>(new FacetAlphabeticalComparator());
 					mSortedFacet.putAll(mFacet);
 				}else{
@@ -186,24 +185,6 @@ public class FacetPanel extends JPanel {
 					mSortedFacet.get(key).setEnabled(true);					
 				}
 			}
-			/*
-			for(String key : mFacet.keySet()){
-				this.add(mFacet.get(key),c);
-				if(selectedFacet.contains(key) || sAllState){
-					mFacet.get(key).setSelected(true);
-				}
-				if(mFacet.get(key).getCount()==0){
-					logger.debug(key + " - Facetcount =0");
-					mFacet.get(key).setEnabled(false);
-					if(mFacet.get(key).isSelected() || sAllState){
-						mFacet.get(key).setSelected(false);
-					}
-					nbFacetItem--;
-					logger.debug("New nbFacetItem="+nbFacetItem);
-				}else{
-					mFacet.get(key).setEnabled(true);					
-				}
-			}*/
 			if(nbFacetItem!=0){
 				if(nbSelectedItem==nbFacetItem){
 					sAll.setSelected(true);
@@ -212,6 +193,13 @@ public class FacetPanel extends JPanel {
 				}
 			}else{
 				sAll.setSelected(sAllState);
+			}
+			if(selectedSortOrder.equalsIgnoreCase("Count")){
+				cbSortOrder.setSelectedIndex(0);
+			}else{
+				if(selectedSortOrder.equalsIgnoreCase("Alphabetical")){
+					cbSortOrder.setSelectedIndex(1);
+				}
 			}
 		}
 	}
