@@ -22,6 +22,7 @@ import java.util.Map;
 import kesako.utilities.SOLRUtilities;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -118,7 +119,7 @@ public class FacetSearch {
 		String itemName;
 		long facetCount;
 		try {
-			r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q));
+			r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q),METHOD.POST);
 			List<Count> lFI=r.getFacetFields().get(0).getValues();
 			vData.clear();
 			if(lFI!=null){

@@ -24,6 +24,7 @@ import kesako.utilities.SOLRUtilities;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.SolrParams;
@@ -113,7 +114,7 @@ public class Search {
 		SolrDocumentList listDoc;
 		ResultDoc rDoc;
 		try {
-			r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q));
+			r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q),METHOD.POST);
 			listDoc=r.getResults();
 			nbFound=listDoc.getNumFound();
 			logger.debug("Nb Results : "+nbFound);
