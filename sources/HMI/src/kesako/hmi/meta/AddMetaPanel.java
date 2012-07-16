@@ -267,7 +267,7 @@ public class AddMetaPanel extends JPanel{
 						add(jpPath,BorderLayout.NORTH);
 						labSourcePath.setText(paths);
 						add(jpMeta,BorderLayout.CENTER);
-						//paintAll(getGraphics());
+						paintAll(getGraphics());
 					}			
 				}	
 			});

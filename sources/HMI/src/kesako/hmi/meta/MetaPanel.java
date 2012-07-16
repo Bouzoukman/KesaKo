@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 
 import kesako.common.FacetSearch;
 import kesako.common.Meta;
+import kesako.hmi.facet.FacetAlphabeticalComparator;
 
 import org.apache.log4j.Logger;
 
@@ -47,7 +48,7 @@ public class MetaPanel extends JPanel{
 		logger.debug("Construction MetaPanel");
 		defaultValue="< meta value >";
 		me=this;
-		values=new TreeSet<String>();
+		values=new TreeSet<String>(new FacetAlphabeticalComparator());
 		this.parent=parent2;
 		this.meta=meta;
 		if(flagColor==1){
