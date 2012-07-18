@@ -23,7 +23,7 @@ import java.util.Vector;
 
 import javax.swing.AbstractListModel;
 
-import kesako.common.ResultDoc;
+import kesako.search.ResultDoc;
 
 import org.apache.log4j.Logger;
 

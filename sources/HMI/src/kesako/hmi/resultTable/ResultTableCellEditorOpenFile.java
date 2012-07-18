@@ -26,7 +26,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import kesako.common.ResultDoc;
+import kesako.search.ResultDoc;
 import kesako.utilities.OSValidator;
 
 import org.apache.log4j.Logger;

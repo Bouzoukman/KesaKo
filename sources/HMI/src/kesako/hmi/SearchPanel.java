@@ -31,14 +31,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.xml.parsers.ParserConfigurationException;
 
-import kesako.common.FacetSearch;
-import kesako.common.Meta;
-import kesako.common.ResultDoc;
-import kesako.common.Search;
 import kesako.hmi.facet.FacetPanel;
 import kesako.hmi.facet.ListFacetPanel;
 import kesako.hmi.resultTable.ResultTable;
 import kesako.hmi.resultTable.ResultTableHeaderComponent;
+import kesako.search.FacetSearch;
+import kesako.search.Meta;
+import kesako.search.ResultDoc;
+import kesako.search.Search;
 import kesako.utilities.XMLUtilities;
 
 import org.apache.log4j.Logger;

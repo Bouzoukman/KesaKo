@@ -24,8 +24,8 @@ import java.util.Vector;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JTable;
 
-import kesako.common.ResultDoc;
 import kesako.hmi.SearchPanel;
+import kesako.search.ResultDoc;
 
 import org.apache.log4j.Logger;
 

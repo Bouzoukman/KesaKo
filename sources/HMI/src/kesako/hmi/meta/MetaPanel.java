@@ -28,9 +28,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import kesako.common.FacetSearch;
-import kesako.common.Meta;
 import kesako.hmi.facet.FacetAlphabeticalComparator;
+import kesako.search.FacetSearch;
+import kesako.search.Meta;
 
 import org.apache.log4j.Logger;
 

@@ -15,18 +15,14 @@
  */
 package kesako.hmi.resultTable;
 
-
-
 import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
 import kesako.common.FileTypeIcon25;
-import kesako.common.ResultDoc;
+import kesako.search.ResultDoc;
 import kesako.utilities.ImageUtilities;
-
-
 
 public class ResultTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -5266958879920356577L;

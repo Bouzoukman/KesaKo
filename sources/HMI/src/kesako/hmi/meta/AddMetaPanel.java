@@ -47,7 +47,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import kesako.common.Meta;
+import kesako.search.Meta;
 import kesako.utilities.DBUtilities;
 import kesako.utilities.FileUtilities;
 import kesako.utilities.XMLUtilities;

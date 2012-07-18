@@ -36,8 +36,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.border.TitledBorder;
 
-import kesako.common.FacetSearch;
 import kesako.hmi.SearchPanel;
+import kesako.search.FacetSearch;
 
 import org.apache.log4j.Logger;
 

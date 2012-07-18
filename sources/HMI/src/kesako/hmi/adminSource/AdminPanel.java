@@ -44,7 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import kesako.common.ResultDoc;
+import kesako.search.ResultDoc;
 import kesako.utilities.Constant;
 import kesako.utilities.DBUtilities;
 import kesako.utilities.Parameters;
