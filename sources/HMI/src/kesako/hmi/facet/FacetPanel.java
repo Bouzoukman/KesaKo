@@ -16,7 +16,9 @@
 package kesako.hmi.facet;
 
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -52,6 +54,10 @@ public class FacetPanel extends JPanel {
 	private JSeparator sep;
 	private GridBagConstraints c;
 	private Map<String,FacetItem> mFacet;
+	/**
+	 * List of facet items for witch the count is 0
+	 */
+	private Map<String,FacetItem> mFacetZero;
 	private Vector<String> selectedFacet;
 	private String selectedSortOrder;
 	private FacetSearch fS;
@@ -64,13 +70,14 @@ public class FacetPanel extends JPanel {
 		this.setLayout(new GridBagLayout());
 
 		mFacet=new LinkedHashMap<String, FacetItem>();
+		mFacetZero=new TreeMap<String,FacetItem>(new FacetAlphabeticalComparator());
 		selectedFacet=new Vector<String>();
 		selectedSortOrder="Count";
 		fS=new FacetSearch(facetName);
 		query="";
 		limit=-1;
 		facetFilter="";
-		
+
 		c=new GridBagConstraints();
 		c.insets=new Insets(1,5,1,5);
 		c.fill=GridBagConstraints.BOTH;
@@ -81,7 +88,7 @@ public class FacetPanel extends JPanel {
 
 		this.facetName=facetName;
 		this.searchPanel=sP;
-		
+
 		this.pTitle=new JPanel();
 		this.pTitle.setLayout(new BoxLayout(this.pTitle, BoxLayout.X_AXIS));
 		sAll = new JCheckBox("SelectAll");
@@ -119,7 +126,7 @@ public class FacetPanel extends JPanel {
 				paintAll(getGraphics());
 			}
 		});
-		
+
 		pTitle.add(cbSortOrder);
 		sep=new JSeparator();
 	}
@@ -138,6 +145,12 @@ public class FacetPanel extends JPanel {
 				logger.debug("item "+key+" is selected");
 			}
 		}
+		for(String key : mFacetZero.keySet()){
+			if(mFacetZero.get(key).isSelected()){
+				selectedFacet.add(key);
+				logger.debug("item "+key+" is selected");
+			}
+		}
 
 		nbSelectedItem=selectedFacet.size();
 		logger.debug("Nb selected item="+nbSelectedItem);
@@ -149,12 +162,17 @@ public class FacetPanel extends JPanel {
 			int facetCount;
 			//constitution of the list of facet items
 			mFacet.clear();
+			mFacetZero.clear();
 			for(String key : fS.getData().keySet()){
 				logger.debug("New Key "+key+" : "+fS.getData().get(key).intValue());
 				facetCount=fS.getData().get(key).intValue();
-				mFacet.put(key,new FacetItem(key,facetCount,this));	
+				if(facetCount==0){
+					mFacetZero.put(key,new FacetItem(key,facetCount,this));						
+				}else{
+					mFacet.put(key,new FacetItem(key,facetCount,this));	
+				}
 			}
-			nbFacetItem=mFacet.size();
+			nbFacetItem=mFacet.size()+mFacetZero.size();
 			logger.debug("Nb facet="+nbFacetItem);
 			if(selectedSortOrder.equalsIgnoreCase("Count")){
 				mSortedFacet=mFacet;
@@ -166,23 +184,29 @@ public class FacetPanel extends JPanel {
 					mSortedFacet=null;
 				}
 			}
-			
+
 			//display facet items
 			for(String key : mSortedFacet.keySet()){
 				this.add(mSortedFacet.get(key),c);
 				if(selectedFacet.contains(key) || sAllState){
 					mSortedFacet.get(key).setSelected(true);
 				}
-				if(mSortedFacet.get(key).getCount()==0){
-					logger.debug(key + " - Facetcount =0");
-					mSortedFacet.get(key).setEnabled(false);
-					if(mSortedFacet.get(key).isSelected() || sAllState){
-						mSortedFacet.get(key).setSelected(false);
+			}
+			if(!mFacetZero.isEmpty()){
+				if(!mFacet.isEmpty()){
+					this.add(new JSeparator(),c);
+				}
+				//display facet items for witch the count is zero
+				for(String key : mFacetZero.keySet()){
+					this.add(mFacetZero.get(key),c);
+					if(selectedFacet.contains(key) || sAllState){
+						mFacetZero.get(key).setSelected(true);
 					}
-					nbFacetItem--;
-					logger.debug("New nbFacetItem="+nbFacetItem);
-				}else{
-					mSortedFacet.get(key).setEnabled(true);					
+					Font f=mFacetZero.get(key).getFont();
+					mFacetZero.get(key).setForeground(Color.BLUE);
+					f=f.deriveFont(Font.PLAIN);
+					f=f.deriveFont(Font.ITALIC);
+					mFacetZero.get(key).setFont(f);
 				}
 			}
 			if(nbFacetItem!=0){
