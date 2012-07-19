@@ -16,7 +16,6 @@
 package kesako.hmi.facet;
 
 
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -28,7 +27,6 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -43,7 +41,6 @@ public class FacetPanel extends JPanel {
 	private static final long serialVersionUID = -4502384658374903402L;
 	private static final Logger logger = Logger.getLogger(FacetPanel.class);
 	private String facetName;
-	private JCheckBox sAll;
 	private JPanel pTitle;
 	private JComboBox<String> cbSortOrder;
 	private int nbFacetItem;
@@ -84,22 +81,6 @@ public class FacetPanel extends JPanel {
 
 		this.pTitle=new JPanel();
 		this.pTitle.setLayout(new BoxLayout(this.pTitle, BoxLayout.X_AXIS));
-		sAll = new JCheckBox("SelectAll");
-		sAll.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Component c;
-				boolean test=sAll.isSelected();
-				for(int i=0; i<getComponents().length;i++){
-					c=getComponents()[i];
-					if(c instanceof FacetItem && ((JCheckBox)c).isEnabled()){
-						((JCheckBox)c).setSelected(test);
-					}
-				}
-				searchPanel.showResults(0,true);
-			}
-		});
-		pTitle.add(sAll);
 		cbSortOrder=new JComboBox<String>();
 		cbSortOrder.addItem("Count");
 		cbSortOrder.addItem("Alphabetical");
@@ -125,7 +106,6 @@ public class FacetPanel extends JPanel {
 	}
 
 	public void showResults(String query,String filter,int facetOrder,int limit){
-		boolean sAllState=sAll.isSelected();
 		Map<String,FacetItem> mSortedFacet;
 		this.removeAll();
 		this.query=query;
@@ -172,18 +152,9 @@ public class FacetPanel extends JPanel {
 			//display facet items
 			for(String key : mSortedFacet.keySet()){
 				this.add(mSortedFacet.get(key),c);
-				if(selectedFacet.contains(key) || sAllState){
+				if(selectedFacet.contains(key)){
 					mSortedFacet.get(key).setSelected(true);
 				}
-			}
-			if(nbFacetItem!=0){
-				if(nbSelectedItem==nbFacetItem){
-					sAll.setSelected(true);
-				}else{
-					sAll.setSelected(false);
-				}
-			}else{
-				sAll.setSelected(sAllState);
 			}
 			if(selectedSortOrder.equalsIgnoreCase("Count")){
 				cbSortOrder.setSelectedIndex(0);
@@ -213,9 +184,10 @@ public class FacetPanel extends JPanel {
 	}
 
 	public void removeFilter(String value,boolean doSearch){
-		sAll.setSelected(false);
-		String regex="\\s*(?:AND)*\\s*"+facetName+"\\:\""+value+"\"";
+		String regex="(?:AND)*\\s*"+facetName+"\\:\""+value+"\"";
 		logger.debug("regex : "+regex);
+		facetFilter=facetFilter.replaceAll(regex, "").trim();
+		regex="\\A\\s*AND";
 		facetFilter=facetFilter.replaceAll(regex, "").trim();
 		logger.debug("RemoveFilter="+facetFilter+"|"+nbSelectedItem+"/"+nbFacetItem+" | ");
 		searchPanel.updateFilter();
