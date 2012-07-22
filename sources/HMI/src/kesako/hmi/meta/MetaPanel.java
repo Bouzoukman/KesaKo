@@ -72,7 +72,7 @@ public class MetaPanel extends JPanel{
 		c.gridx=1;
 		c.weightx=1;
 		c.fill=GridBagConstraints.HORIZONTAL;
-		txtMetaValue = new JTextField("< meta value >");
+		txtMetaValue = new JTextField(defaultValue);
 		txtMetaValue.addFocusListener(new FocusListener(){
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -109,7 +109,6 @@ public class MetaPanel extends JPanel{
 		values.clear();
 		if(!meta.getName().trim().equalsIgnoreCase("titre_f")&&!meta.getName().trim().equalsIgnoreCase("titre_doc")&&!meta.getName().trim().equalsIgnoreCase("author_f")&&!meta.getName().trim().equalsIgnoreCase("date")){
 			FacetSearch fS=new FacetSearch(meta.getName());
-			//TODO verifier qu'il n'y a pas de problème avec la méthode doSearch
 			if(fS.doSearch("","",FacetSearch.INDEX,-1)==FacetSearch.RESULTS){
 				for(String key:fS.getData().keySet()){
 					values.add(key);
