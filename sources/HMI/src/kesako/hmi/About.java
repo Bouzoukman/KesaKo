@@ -34,7 +34,7 @@ public class About extends JDialog {
 	
 	public About(JFrame owner){
 		super(owner,"About Kes@Ko - "+HMI.VERSION);
-		setSize(500,350);
+		setSize(500,400);
 		//setAlwaysOnTop(true);
 		this.setIconImage(ImageUtilities.getHmiImage());
 		setResizable(false);
@@ -52,7 +52,8 @@ public class About extends JDialog {
 				"<p>Kes@Ko logo is distributed under Creative Common licence</p>" +
 				"<p>Icons used in Kes@Ko comme from Faenza project.<br>" +
 				"Faenza is designed and developed by Matthieu James: matthieu.james@gmail.com.<br>"+
-				"Faenza icons are all licensed under the GPL.</p>");
+				"Faenza icons are all licensed under the GPL.</p>" +
+				"<p>The source code can be found at: https://github.com/Bouzoukman/KesaKo</p>");
 		add(text,BorderLayout.CENTER);
 	}
 }
