@@ -1,2 +1,1 @@
-java -jar kesako-StartServer-311F2.0.jar
-pause
+java -jar kesako-StartServer-311F8.0.jar

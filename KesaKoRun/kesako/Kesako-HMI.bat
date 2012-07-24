@@ -1,2 +1,1 @@
-java -jar kesako-HMI-311F2.0.jar
-pause
+java -jar kesako-HMI-311F8.0.jar
