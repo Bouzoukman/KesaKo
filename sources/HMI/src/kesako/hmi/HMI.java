@@ -78,7 +78,7 @@ public class HMI extends JFrame{
 		super("Kes@Ko - "+VERSION);
 		logger.debug("HMI Construction");
 		this.setJMenuBar(menuIHM());
-		this.setIconImage(ImageUtilities.getHmiImage());
+		this.setIconImage(ImageUtilities.getLogoImage());
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowListener() {

@@ -36,11 +36,11 @@ public class About extends JDialog {
 		super(owner,"About Kes@Ko - "+HMI.VERSION);
 		setSize(500,400);
 		//setAlwaysOnTop(true);
-		this.setIconImage(ImageUtilities.getHmiImage());
+		this.setIconImage(ImageUtilities.getLogoImage());
 		setResizable(false);
 		setLocation(200,200);
 		setLayout(new BorderLayout());
-		add(new JLabel(new ImageIcon(ImageUtilities.getHmiImage())),BorderLayout.WEST);
+		add(new JLabel(new ImageIcon(ImageUtilities.getLogoImage())),BorderLayout.WEST);
 		JEditorPane text=new JEditorPane();
 		text.setContentType("text/html");
 		text.setText("<p style=\"text-decoration:underline;font-weight:bold; color:blue\">Kes@Ko - "+HMI.VERSION+"</p>" +

@@ -26,7 +26,7 @@ public class ImageUtilities {
 	/**
 	 * logo of Kes@Ko
 	 */
-	private static Image hmiImage;
+	private static Image logoImage;
 	/**
 	 * logo for msWord file.
 	 */
@@ -51,7 +51,11 @@ public class ImageUtilities {
 	 * Initialization of the Image objects with image in the directory resources. This directory is include in the JAR file of the Utilities JAR.
 	 */
 	public ImageUtilities(){
-		hmiImage=Toolkit.getDefaultToolkit().getImage(getClass().getResource("/kesako/resources/red.jpg"));
+		if(Parameters.getHmiLogo()!=null){
+			logoImage=Parameters.getHmiLogo();
+		}else{
+			logoImage=Toolkit.getDefaultToolkit().getImage(getClass().getResource("/kesako/resources/red.jpg"));
+		}
 		msWordImage=Toolkit.getDefaultToolkit().getImage(getClass().getResource("/kesako/resources/application-msword.png"));
 		textImage=Toolkit.getDefaultToolkit().getImage(getClass().getResource("/kesako/resources/text-plain.png"));
 		htmlImage=Toolkit.getDefaultToolkit().getImage(getClass().getResource("/kesako/resources/text-html.png"));
@@ -61,8 +65,8 @@ public class ImageUtilities {
 	/**
 	 * Return the logo of Kes@Ko
 	 */
-	public static Image getHmiImage() {
-		return hmiImage;
+	public static Image getLogoImage() {
+		return logoImage;
 	}
 	/**
 	 * Return the logo of msWord file

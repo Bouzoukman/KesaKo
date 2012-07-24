@@ -15,10 +15,13 @@
  */
 package kesako.utilities;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 
 import org.apache.log4j.Logger;
@@ -73,7 +76,11 @@ public class Parameters {
 	 * Maximum number of files to index during an indexing task
 	 */
 	private static int nbFile;
-	
+	/**
+	 * Logo of the HMI. If the user want a specific logo, he must specify the parameter hmilogo.
+	 */
+	private static Image hmiLogo=null;
+
 	/**
 	 * Read the property file and initialize all parameters.
 	 * This class use the PropertyResourceBundle class to read the property file.
@@ -101,6 +108,21 @@ public class Parameters {
 			Parameters.indexInterval=Integer.parseInt(fconfig.getString("indexInterval"));
 			Parameters.indexErrorInterval=Integer.parseInt(fconfig.getString("indexErrorInterval"));
 			Parameters.nbFile=Integer.parseInt(fconfig.getString("nbFile"));
+			try{
+				if(!fconfig.getString("hmiLogo").trim().equals("")){
+					if(new File(fconfig.getString("hmiLogo").trim()).exists()){
+						Parameters.hmiLogo=Toolkit.getDefaultToolkit().getImage(fconfig.getString("hmiLogo").trim());
+					}else{
+						Parameters.hmiLogo=null;
+					}
+				}else{
+					Parameters.hmiLogo=null;
+				}
+			}
+			catch(MissingResourceException e){
+				Parameters.hmiLogo=null;
+			}
+			logger.debug("HMILOGO="+hmiLogo);
 		}
 		catch (FileNotFoundException e) {
 			logger.fatal(nomfic +" file not found",e);
@@ -169,5 +191,11 @@ public class Parameters {
 	 */
 	public static int getNbFile() {
 		return nbFile;
+	}
+	/**
+	 * Return the logo of the HMI
+	 */
+	public static Image getHmiLogo() {
+		return hmiLogo;
 	}
 }
