@@ -34,7 +34,7 @@ public class About extends JDialog {
 	
 	public About(JFrame owner){
 		super(owner,"About Kes@Ko - "+HMI.VERSION);
-		setSize(500,400);
+		setSize(600,400);
 		//setAlwaysOnTop(true);
 		this.setIconImage(ImageUtilities.getLogoImage());
 		setResizable(false);
@@ -44,12 +44,13 @@ public class About extends JDialog {
 		JEditorPane text=new JEditorPane();
 		text.setContentType("text/html");
 		text.setText("<p style=\"text-decoration:underline;font-weight:bold; color:blue\">Kes@Ko - "+HMI.VERSION+"</p>" +
-				"<p>Kes@Ko is distributed under licence Apache 2.0</p>" +
-				"<p>Kes@Ko is using HSQLDB, Jetty, and SOLR<br>" +
-				"<span style=\"text-decoration:underline;\">HSQLDB</span> is distributed under licence HSQLDB<br>" +
-				"<span style=\"text-decoration:underline;\">Jetty</span> is distributed under licence Eclipse<br>" +
-				"<span style=\"text-decoration:underline;\">SOLR</span> is distributed under licence Apache 2.0</p>" +
-				"<p>Kes@Ko logo is distributed under Creative Common licence</p>" +
+				"<p>Kes@Ko is distributed under license Apache 2.0</p>" +
+				"<p>Kes@Ko is using HSQLDB, Jetty, SOLR and Log4J<br>" +
+				"<span style=\"text-decoration:underline;\">HSQLDB</span> is licensed under HSQLDB license.<br>" +
+				"<span style=\"text-decoration:underline;\">Jetty</span> is licensed under the Apache 2.0 license.<br>" +
+				"<span style=\"text-decoration:underline;\">SOLR</span> is licensed under the Apache 2.0 license.</p>" +
+				"<span style=\"text-decoration:underline;\">Log4J</span> is licensed under the Apache 2.0 license.</p>" +
+				"<p>Kes@Ko logo is distributed under Creative Common license</p>" +
 				"<p>Icons used in Kes@Ko comme from Faenza project.<br>" +
 				"Faenza is designed and developed by Matthieu James: matthieu.james@gmail.com.<br>"+
 				"Faenza icons are all licensed under the GPL.</p>" +

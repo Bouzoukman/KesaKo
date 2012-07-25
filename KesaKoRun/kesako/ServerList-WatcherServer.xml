@@ -14,5 +14,5 @@
 		<name>Watcher</name>
 		<description>Start the KesaKo Watcher Server</description>
 		<workDir>./</workDir>
-		<command>java -jar kesako-watcher-311F2.0.jar</command></server>
+		<command>java -jar kesako-watcher-311F8.0.jar</command></server>
 </root>
