@@ -156,7 +156,7 @@ public class HMI extends JFrame{
 			}		
 		});
 		//Help menu. It contains the About item.
-		JMenu mHelp=new JMenu("Help");
+		JMenu mHelp=new JMenu("?");
 		menu.add(mHelp);
 		//About item.
 		JMenuItem iAbout=new JMenuItem("About");
