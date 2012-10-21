@@ -15,15 +15,16 @@
  */
 package kesako.hmi.meta;
 
-
 import java.util.Vector;
-
 import javax.swing.AbstractListModel;
-
-public class FileListMetaModel extends AbstractListModel<String> {
+/**
+ * List all the values of a meta-data
+ * @author Frédéric SACHOT
+ */
+public class ListMetaModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = -3117864723405912379L;
 	private Vector<String> data;
-	public FileListMetaModel(Vector<String> listMeta){
+	public ListMetaModel(Vector<String> listMeta){
 		this.data=listMeta;
 	}
 	@Override

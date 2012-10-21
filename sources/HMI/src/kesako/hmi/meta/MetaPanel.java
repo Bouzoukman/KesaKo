@@ -19,11 +19,14 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.TreeSet;
 
 import javax.swing.InputVerifier;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -33,7 +36,10 @@ import kesako.search.FacetSearch;
 import kesako.search.Meta;
 
 import org.apache.log4j.Logger;
-
+/**
+ * Panel that displays a textfield to specify a meta-value.
+ * @author Frédéric SACHOT
+ * */
 public class MetaPanel extends JPanel{
 	private static final long serialVersionUID = -8668407800902178469L;
 	private static final Logger logger = Logger.getLogger(MetaPanel.class);
@@ -43,18 +49,21 @@ public class MetaPanel extends JPanel{
 	private AddMetaPanel parent;
 	private MetaPanel me;
 	private String defaultValue;
-	
-	public MetaPanel (Meta meta,AddMetaPanel parent2,int flagColor){
+
+	public MetaPanel (Meta meta2,AddMetaPanel parent2,int flagColor,boolean first){
 		logger.debug("Construction MetaPanel");
 		defaultValue="< meta value >";
 		me=this;
 		values=new TreeSet<String>(new FacetAlphabeticalComparator());
 		this.parent=parent2;
-		this.meta=meta;
+		this.meta=meta2;
 		if(flagColor==1){
+			this.setOpaque(true);
 			this.setBackground(Color.WHITE);
+		}else{
+			this.setOpaque(false);
 		}
-	
+
 		GridBagConstraints c=new GridBagConstraints();
 		c.insets=new Insets(2,5,2,5);
 		c.ipadx=5;
@@ -82,7 +91,7 @@ public class MetaPanel extends JPanel{
 				parent.getMetaValues().removeAllElements();
 				parent.getMetaValues().addAll(values);
 				parent.setSelectedMetaPanel(me);
-				((FileListMetaModel)parent.getListValues().getModel()).updateData();
+				((ListMetaModel)parent.getListValues().getModel()).updateData();
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -92,8 +101,25 @@ public class MetaPanel extends JPanel{
 			}
 		});
 		this.add(txtMetaValue,c);
+		if(first){
+			c.gridx=2;
+			c.weightx=0;
+			c.fill=GridBagConstraints.NONE;
+			JButton bAll=new JButton("All");
+			bAll.addActionListener(new ActionListener() {		
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					// TODO Auto-generated method stub
+					for(int i=0;i<parent.getvFileMeta().size();i++){
+						parent.getvFileMeta().get(i).getMetaPanels().get(meta.getName()).setMetaValue(getMetaValue());
+					}
+				}
+			});
+			this.add(bAll,c);
+		}
+
 	}
-	
+
 	public String getMetaValue() {
 		String value="";
 		if(!txtMetaValue.getText().trim().equalsIgnoreCase(defaultValue)){
@@ -102,7 +128,11 @@ public class MetaPanel extends JPanel{
 		return value;
 	}
 	public void setMetaValue(String value){
-		txtMetaValue.setText(value.trim());
+		if(!value.trim().equals("")){
+			txtMetaValue.setText(value.trim());
+		}else{
+			txtMetaValue.setText(defaultValue);
+		}
 	}
 
 	public void updateValues(){
@@ -117,9 +147,9 @@ public class MetaPanel extends JPanel{
 			}
 		}
 	}
+
 	public void setInputVerifier(InputVerifier iv){
-		txtMetaValue.setInputVerifier(iv);
-		
+		txtMetaValue.setInputVerifier(iv);	
 	}
 
 	/**
