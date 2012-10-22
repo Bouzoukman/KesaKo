@@ -188,21 +188,6 @@ public class FileMetaPanel extends JPanel{
 	public Vector<String> getMetaValues() {
 		return metaValues;
 	}
-
-	private class DateVerifier extends InputVerifier{
-		@Override
-		public boolean verify(JComponent input) {
-			JTextField tf = (JTextField) input;
-			String dateTxt=tf.getText().trim();
-			boolean valid=dateTxt.matches("\\d{4}-\\d{2}-\\d{2}");
-			if(!valid && !dateTxt.trim().equals("") && !dateTxt.trim().equalsIgnoreCase("yyyy-mm-dd")){
-				JOptionPane.showMessageDialog(input, "The date is in the wrong format.\n The format is yyyy-mm-dd","Date Format Error", JOptionPane.ERROR_MESSAGE);
-			}else{
-				valid=true;
-			}
-			return valid;
-		}	
-	}
 	
 	public void saveMetaXML(){
 		//création du fichier xml
@@ -245,6 +230,21 @@ public class FileMetaPanel extends JPanel{
 	 */
 	public TreeMap<String, MetaPanel> getMetaPanels() {
 		return this.vMetaPanels;
+	}
+/*################################################################################################################################################*/
+	private class DateVerifier extends InputVerifier{
+		@Override
+		public boolean verify(JComponent input) {
+			JTextField tf = (JTextField) input;
+			String dateTxt=tf.getText().trim();
+			boolean valid=dateTxt.matches("\\d{4}-\\d{2}-\\d{2}");
+			if(!valid && !dateTxt.trim().equals("") && !dateTxt.trim().equalsIgnoreCase("yyyy-mm-dd")){
+				JOptionPane.showMessageDialog(input, "The date is in the wrong format.\n The format is yyyy-mm-dd","Date Format Error", JOptionPane.ERROR_MESSAGE);
+			}else{
+				valid=true;
+			}
+			return valid;
+		}	
 	}
 
 }

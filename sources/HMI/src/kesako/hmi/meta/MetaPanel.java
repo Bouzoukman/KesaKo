@@ -49,10 +49,11 @@ public class MetaPanel extends JPanel{
 	private AddMetaPanel parent;
 	private MetaPanel me;
 	private String defaultValue;
+	public static final String STRING_DEFAULT_VALUE="< meta value >";
 
 	public MetaPanel (Meta meta2,AddMetaPanel parent2,int flagColor,boolean first){
 		logger.debug("Construction MetaPanel");
-		defaultValue="< meta value >";
+		defaultValue=STRING_DEFAULT_VALUE;
 		me=this;
 		values=new TreeSet<String>(new FacetAlphabeticalComparator());
 		this.parent=parent2;
@@ -157,6 +158,9 @@ public class MetaPanel extends JPanel{
 	 */
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+		if (txtMetaValue.getText().trim().equalsIgnoreCase(STRING_DEFAULT_VALUE)||txtMetaValue.getText().trim().equals("")){
+			txtMetaValue.setText(defaultValue);
+		}
 	}
 
 	/**
