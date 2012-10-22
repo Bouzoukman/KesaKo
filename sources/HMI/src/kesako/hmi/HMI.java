@@ -55,7 +55,7 @@ public class HMI extends JFrame{
 	/**
 	 * Version number of the software.
 	 */
-	public static final String VERSION="311F8.0";
+	public static final String VERSION="311F8.2";
 	/**
 	 * Panel for the research interface.
 	 */
