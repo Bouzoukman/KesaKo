@@ -83,7 +83,7 @@ public class ResultTableModel extends AbstractTableModel {
 		case 0://date
 			c.setTime(data.get(rowIndex).getDocDate());
 			value=(c.get(Calendar.DATE)<10?"0"+Integer.toString(c.get(Calendar.DATE)):Integer.toString(c.get(Calendar.DATE)))+"/"
-			+(c.get(Calendar.MONTH)<10?"0"+Integer.toString(c.get(Calendar.MONTH)+1):Integer.toString(c.get(Calendar.MONTH)+1))+"/"
+			+(c.get(Calendar.MONTH)<9?"0"+Integer.toString(c.get(Calendar.MONTH)+1):Integer.toString(c.get(Calendar.MONTH)+1))+"/"
 					+c.get(Calendar.YEAR);
 			break;
 		case 1://title of the file "<b><u>"+value.toString()+"</u></b><br>"
