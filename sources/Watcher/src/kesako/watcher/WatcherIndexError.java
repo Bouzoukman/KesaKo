@@ -40,7 +40,7 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
  * Process that launch all needed document processes.<br>
  * The class implements the Log4J logging system.
  * @author Frederic SACHOT
- * @version 311F2.0
+ * @version 311F2.1
  */
 public class WatcherIndexError {
 	/**
