@@ -111,9 +111,10 @@ public class MetaFileProcess extends IntervalDBWork{
 	/**
 	 * Recover the meta-data of the file fileURI from the index.
 	 * @param fileURI
+	 * @return true if the file is in the index, false otherwise.
 	 * @throws SolrServerException
 	 */
-	private void getIndexMeta(String fileURI) throws SolrServerException{
+	private boolean getIndexMeta(String fileURI) throws SolrServerException{
 		logger.debug("getIndexMeta");
 		//titreF.clear();
 		String query="file_uri:\""+fileURI.replace("\\", "\\\\")+"\"";
@@ -128,6 +129,7 @@ public class MetaFileProcess extends IntervalDBWork{
 		SolrDocument solrDoc;
 		r = SOLRUtilities.getSOLRServer().query(SolrParams.toSolrParams(q));
 		listDoc = r.getResults();
+		boolean test;
 		if(listDoc!=null && listDoc.size()>0){
 			solrDoc=listDoc.iterator().next();
 			if(solrDoc.getFieldValue("title")!=null){
@@ -157,11 +159,14 @@ public class MetaFileProcess extends IntervalDBWork{
 					titreF.add(solrDoc.getFieldValue("titre_f").toString());
 				}
 			}*/
+			test=true;
 		}else{
 			title="";
 			author="";
 			date=null;
+			test=false;
 		}
+		return test;
 	}
 	/**
 	 * Recover the meta-data of the file from the meta-file<br>
@@ -198,89 +203,91 @@ public class MetaFileProcess extends IntervalDBWork{
 			rs=DBUtilities.executeQuery(cn,query);
 			rs.next();
 			file=new File(rs.getString("fileURI"));
-			getIndexMeta(rs.getString("fileURI"));
-			logger.debug("title="+title);
-			logger.debug("author="+author);
 
-			query="delete from t_metas where id_fichier="+idFichier;
-			DBUtilities.executeQuery(cn,query);
-			nomFicMeta=FileUtilities.getFileMetaName(file.getAbsolutePath());
-			logger.debug("nomFicMeta="+nomFicMeta);
-			fileMeta=new File(nomFicMeta);
-			logger.debug("fileMeta : "+fileMeta.getAbsolutePath());
-			if(fileMeta.exists() && fileMeta.isFile()){
-				logger.debug("fileMeta exist");
-				query="update t_fichiers set date_meta_modified="+fileMeta.lastModified() +" where id_fichier="+idFichier;
+			if(getIndexMeta(rs.getString("fileURI"))){
+				logger.debug("title="+title);
+				logger.debug("author="+author);
+
+				query="delete from t_metas where id_fichier="+idFichier;
 				DBUtilities.executeQuery(cn,query);
-				db = dbf.newDocumentBuilder();
-				doc = db.parse(fileMeta);
-				doc.getDocumentElement().normalize();
-				Node root=doc.getDocumentElement();
-				logger.debug("Root element " + root.getNodeName());
-				NodeList nodeLst = root.getChildNodes();
-				for (int s = 0; s < nodeLst.getLength(); s++) {
-					Node fstNode = nodeLst.item(s);
-					if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
-						logger.debug(fstNode.getNodeName()+" : "+fstNode.getAttributes().item(0).getNodeValue()+" : "+fstNode.getAttributes().item(1).getNodeValue());
-						if(fstNode.getNodeName().equalsIgnoreCase("meta")){
-							nomMeta="";
-							valueMeta="";
-							for(int j=0;j<fstNode.getAttributes().getLength();j++){
-								if(fstNode.getAttributes().item(j).getNodeName().equalsIgnoreCase("name")){
-									nomMeta=fstNode.getAttributes().item(j).getNodeValue();														
+				nomFicMeta=FileUtilities.getFileMetaName(file.getAbsolutePath());
+				logger.debug("nomFicMeta="+nomFicMeta);
+				fileMeta=new File(nomFicMeta);
+				logger.debug("fileMeta : "+fileMeta.getAbsolutePath());
+				if(fileMeta.exists() && fileMeta.isFile()){
+					logger.debug("fileMeta exist");
+					query="update t_fichiers set date_meta_modified="+fileMeta.lastModified() +" where id_fichier="+idFichier;
+					DBUtilities.executeQuery(cn,query);
+					db = dbf.newDocumentBuilder();
+					doc = db.parse(fileMeta);
+					doc.getDocumentElement().normalize();
+					Node root=doc.getDocumentElement();
+					logger.debug("Root element " + root.getNodeName());
+					NodeList nodeLst = root.getChildNodes();
+					for (int s = 0; s < nodeLst.getLength(); s++) {
+						Node fstNode = nodeLst.item(s);
+						if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
+							logger.debug(fstNode.getNodeName()+" : "+fstNode.getAttributes().item(0).getNodeValue()+" : "+fstNode.getAttributes().item(1).getNodeValue());
+							if(fstNode.getNodeName().equalsIgnoreCase("meta")){
+								nomMeta="";
+								valueMeta="";
+								for(int j=0;j<fstNode.getAttributes().getLength();j++){
+									if(fstNode.getAttributes().item(j).getNodeName().equalsIgnoreCase("name")){
+										nomMeta=fstNode.getAttributes().item(j).getNodeValue();														
+									}
+									if(fstNode.getAttributes().item(j).getNodeName().equalsIgnoreCase("value")){
+										valueMeta=fstNode.getAttributes().item(j).getNodeValue();														
+									}
 								}
-								if(fstNode.getAttributes().item(j).getNodeName().equalsIgnoreCase("value")){
-									valueMeta=fstNode.getAttributes().item(j).getNodeValue();														
+								logger.debug("nomMeta="+nomMeta+" , value="+valueMeta);
+								if(nomMeta.equalsIgnoreCase("Titre_f")){
+									if(!valueMeta.trim().equals("")){
+										title=valueMeta.trim();
+									}
+								}else if(nomMeta.trim().equalsIgnoreCase("titre_doc")){
+									query="update t_fichiers set titre_doc='"+DBUtilities.getStringSQL(valueMeta.trim())+"' where id_fichier="+idFichier;
+									DBUtilities.executeQuery(cn,query);
+								}else if(nomMeta.equalsIgnoreCase("author_f")){
+									if(!valueMeta.trim().equals("")){
+										author=valueMeta.trim();
+									}
+								}else if(nomMeta.equalsIgnoreCase("date")){
+									if(!valueMeta.trim().equals("")){
+										date=formatMETA.parse(valueMeta.trim());
+									}
+								}else if(!nomMeta.equalsIgnoreCase("nomFic")){
+									query="insert into t_metas (nom,value,id_fichier) values ('"+
+											DBUtilities.getStringSQL(nomMeta)+"','" + DBUtilities.getStringSQL(valueMeta)+"'," + idFichier+")";
+									DBUtilities.executeQuery(cn,query);
 								}
-							}
-							logger.debug("nomMeta="+nomMeta+" , value="+valueMeta);
-							if(nomMeta.equalsIgnoreCase("Titre_f")){
-								if(!valueMeta.trim().equals("")){
-									title=valueMeta.trim();
-								}
-							}else if(nomMeta.trim().equalsIgnoreCase("titre_doc")){
-								query="update t_fichiers set titre_doc='"+DBUtilities.getStringSQL(valueMeta.trim())+"' where id_fichier="+idFichier;
-								DBUtilities.executeQuery(cn,query);
-							}else if(nomMeta.equalsIgnoreCase("author_f")){
-								if(!valueMeta.trim().equals("")){
-									author=valueMeta.trim();
-								}
-							}else if(nomMeta.equalsIgnoreCase("date")){
-								if(!valueMeta.trim().equals("")){
-									date=formatMETA.parse(valueMeta.trim());
-								}
-							}else if(!nomMeta.equalsIgnoreCase("nomFic")){
-								query="insert into t_metas (nom,value,id_fichier) values ('"+
-										DBUtilities.getStringSQL(nomMeta)+"','" + DBUtilities.getStringSQL(valueMeta)+"'," + idFichier+")";
-								DBUtilities.executeQuery(cn,query);
 							}
 						}
-					}
-				}	
-			}else{
-				//no meta-file
-			}
-			if(!title.trim().equals("")){
-				query="update t_fichiers set titre_f='"+DBUtilities.getStringSQL(title)+"' where id_fichier="+idFichier;
+					}	
+				}else{
+					//no meta-file
+				}
+				if(!title.trim().equals("")){
+					query="update t_fichiers set titre_f='"+DBUtilities.getStringSQL(title)+"' where id_fichier="+idFichier;
+					DBUtilities.executeQuery(cn,query);
+				}
+				if(!author.trim().equals("")){
+					query="update t_fichiers set author_f='"+DBUtilities.getStringSQL(author)+"' where id_fichier="+idFichier;
+					DBUtilities.executeQuery(cn,query);
+				}
+				if(date!=null){
+					Calendar c=Calendar.getInstance();
+					c.setTime(date);
+					query="update t_fichiers set dateextracted='"+c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH)+"' where id_fichier="+idFichier;
+					DBUtilities.executeQuery(cn,query);
+				}
+				query="update t_fichiers set flag="+Constant.TO_INDEX+
+						", flag_meta="+Constant.META_EXTRACTED+ 
+						", priority="+Constant.PRIORITY_META_FILE+
+						" where id_fichier="+idFichier;
 				DBUtilities.executeQuery(cn,query);
-			}
-			if(!author.trim().equals("")){
-				query="update t_fichiers set author_f='"+DBUtilities.getStringSQL(author)+"' where id_fichier="+idFichier;
-				DBUtilities.executeQuery(cn,query);
-			}
-			if(date!=null){
-				Calendar c=Calendar.getInstance();
-				c.setTime(date);
-				query="update t_fichiers set dateextracted='"+c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH)+"' where id_fichier="+idFichier;
-				DBUtilities.executeQuery(cn,query);
-			}
-			query="update t_fichiers set flag="+Constant.TO_INDEX+
-					", flag_meta="+Constant.META_EXTRACTED+ 
-					", priority="+Constant.PRIORITY_META_FILE+
-					" where id_fichier="+idFichier;
-			DBUtilities.executeQuery(cn,query);
 
-			cn.commit();
+				cn.commit();
+			}
 		} catch (SQLException e) {
 			logger.fatal("ERROR : "+ query,e);
 			try {
@@ -325,9 +332,9 @@ public class MetaFileProcess extends IntervalDBWork{
 				isBatchProcessing=false;
 				logger.fatal("Meta-Processing ",e);
 				try {
-				query="update t_fichiers set flag="+Constant.INDEXED_ERROR+
-						", flag_meta="+Constant.ERROR_META+
-						" where id_fichier="+idFichier;
+					query="update t_fichiers set flag="+Constant.INDEXED_ERROR+
+							", flag_meta="+Constant.ERROR_META+
+							" where id_fichier="+idFichier;
 					DBUtilities.executeQuery(cn,query);
 				} catch (SQLException e1) {
 					logger.fatal("ERROR : "+query,e1);
