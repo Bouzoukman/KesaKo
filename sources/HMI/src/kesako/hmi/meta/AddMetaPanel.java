@@ -45,13 +45,10 @@ public class AddMetaPanel extends JPanel{
 	private static final long serialVersionUID = -8668407800902178469L;
 	private static final Logger logger = Logger.getLogger(AddMetaPanel.class);
 	/**
-	 * Save button
-	 */
-	private JButton bSave;
-	/**
 	 * Choose file button
 	 */
 	private JPanel jpChooseFile;
+	int nbFile=0;
 	private File initialDirectory;
 	/**
 	 * List of FileMetaPanel
@@ -111,6 +108,7 @@ public class AddMetaPanel extends JPanel{
 		cMeta.ipadx=5;
 		cMeta.ipady=5;
 		cMeta.fill=GridBagConstraints.BOTH;
+		cMeta.anchor=GridBagConstraints.CENTER;
 		cMeta.gridheight=1;
 		cMeta.gridwidth=1;
 		cMeta.weightx=1;
@@ -124,22 +122,81 @@ public class AddMetaPanel extends JPanel{
 		
 		cMeta.gridx=0;
 		cMeta.gridy=0;
+		cMeta.weightx=0.5;
+		cMeta.weighty=0;
+		cMeta.gridheight=1;
+		cMeta.gridwidth=2;			
 		jpMeta.add(jpFileMeta,cMeta);
 		
-		cMeta.gridx=1;
+		cMeta.gridx=2;
 		cMeta.gridy=0;
 		cMeta.gridheight=3;
+		cMeta.gridwidth=1;			
 		cMeta.weighty=1;
 		jpMeta.add(listValues,cMeta);
 		
 		cMeta.gridx=0;
 		cMeta.gridy=1;
 		cMeta.fill=GridBagConstraints.NONE;
-		cMeta.weightx=0;
+		cMeta.weightx=0.25;
 		cMeta.weighty=0;
 		cMeta.gridheight=1;
 		cMeta.gridwidth=1;			
-		bSave = new JButton("Save");
+		JButton bAddFile = new JButton("Add New File");
+		jpMeta.add(bAddFile,cMeta);
+		bAddFile.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FileMetaPanel fMeta;
+				boolean showAllButton=false;
+				JFileChooser chooser = new JFileChooser();
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setMultiSelectionEnabled(true);
+				chooser.setAcceptAllFileFilterUsed(false);
+				chooser.addChoosableFileFilter(new FileFilter(){
+					@Override
+					public boolean accept(File f) {
+						boolean test;
+						test=DBUtilities.isAccetableFile(f);
+						if(!f.isDirectory()){
+							test=test&&FileUtilities.isValidExtansion(f);
+						}
+						return test;
+					}
+					@Override
+					public String getDescription() {
+						return "Indexable File";
+					}
+				});
+				chooser.setCurrentDirectory(initialDirectory);
+				int returnVal = chooser.showOpenDialog((Component)e.getSource());
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					initialDirectory=chooser.getCurrentDirectory();
+					for(int i=0;i<chooser.getSelectedFiles().length;i++){
+						logger.debug("Sélection fichier : "+chooser.getSelectedFiles()[i].getAbsolutePath());
+						//show the button All only if this is the first file and if the number of file > 1
+						showAllButton= (i==0 && chooser.getSelectedFiles().length>1);
+						fMeta=new FileMetaPanel(chooser.getSelectedFiles()[i],me,nbFile%2,showAllButton);							
+						vFileMeta.add(fMeta);
+						jpFileMeta.add(fMeta);
+						fMeta.initMeta();
+						nbFile++;
+					}
+					add(jpMeta,BorderLayout.CENTER);
+					SwingUtilities.invokeLater(new Runnable(){
+						@Override
+						public void run() {
+							paintAll(getGraphics());
+						}
+					});
+				}			
+			}	
+		});
+
+		cMeta.gridx=1;
+		cMeta.gridy=1;
+		cMeta.fill=GridBagConstraints.NONE;
+		JButton bSave = new JButton("Save");
 		jpMeta.add(bSave,cMeta);
 		bSave.addActionListener(new ActionListener() {		
 			@Override
@@ -151,7 +208,9 @@ public class AddMetaPanel extends JPanel{
 			}
 		});
 		
+		cMeta.gridx=0;
 		cMeta.gridy=2;
+		cMeta.gridwidth=2;			
 		cMeta.weighty=1;
 		jpMeta.add(new JPanel());
 		
@@ -162,6 +221,8 @@ public class AddMetaPanel extends JPanel{
 		bChooseFile.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				FileMetaPanel fMeta;
+				boolean showAllButton=false;
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				chooser.setMultiSelectionEnabled(true);
@@ -186,22 +247,20 @@ public class AddMetaPanel extends JPanel{
 				if(returnVal == JFileChooser.APPROVE_OPTION) {
 					vFileMeta.removeAllElements();
 					jpFileMeta.removeAll();
+					nbFile=0;
 					initialDirectory=chooser.getCurrentDirectory();
 					for(int i=0;i<chooser.getSelectedFiles().length;i++){
 						logger.debug("Sélection fichier : "+chooser.getSelectedFiles()[i].getAbsolutePath());
-						FileMetaPanel fMeta;
-						if(i==0){
-							fMeta=new FileMetaPanel(chooser.getSelectedFiles()[i],me,i%2,true);
-						}else{
-							fMeta=new FileMetaPanel(chooser.getSelectedFiles()[i],me,i%2,false);							
-						}
+						//show the button All only if this is the first file and if the number of file > 1
+						showAllButton= (i==0 && chooser.getSelectedFiles().length>1);
+						fMeta=new FileMetaPanel(chooser.getSelectedFiles()[i],me,nbFile%2,showAllButton);							
 						vFileMeta.add(fMeta);
 						jpFileMeta.add(fMeta);
 						fMeta.initMeta();
+						nbFile++;
 					}
 					removeAll();
 					add(jpMeta,BorderLayout.CENTER);
-					paintAll(getGraphics());
 					SwingUtilities.invokeLater(new Runnable(){
 						@Override
 						public void run() {

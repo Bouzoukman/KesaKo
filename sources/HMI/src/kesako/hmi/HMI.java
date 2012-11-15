@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
 /**
- * Implement the interface of Kes@Ko - 311F8.0<br>
+ * Implement the interface of Kes@Ko - 311F8.3<br>
  * The version number of the software is built as follow :
  * First number : month + year x 100 converted in Hexadecimal. Here 02+2012x100 = 201202 = 311F2<br>
  * Second number : the patch number converted in Hexadecimal. <br>
@@ -55,7 +55,7 @@ public class HMI extends JFrame{
 	/**
 	 * Version number of the software.
 	 */
-	public static final String VERSION="311F8.2";
+	public static final String VERSION="311F8.3";
 	/**
 	 * Panel for the research interface.
 	 */

@@ -50,8 +50,9 @@ public class MetaPanel extends JPanel{
 	private MetaPanel me;
 	private String defaultValue;
 	public static final String STRING_DEFAULT_VALUE="< meta value >";
+	private JButton bAll;
 
-	public MetaPanel (Meta meta2,AddMetaPanel parent2,int flagColor,boolean first){
+	public MetaPanel (Meta meta2,AddMetaPanel parent2,int flagColor,boolean showAllButton){
 		logger.debug("Construction MetaPanel");
 		defaultValue=STRING_DEFAULT_VALUE;
 		me=this;
@@ -102,23 +103,20 @@ public class MetaPanel extends JPanel{
 			}
 		});
 		this.add(txtMetaValue,c);
-		if(first){
-			c.gridx=2;
-			c.weightx=0;
-			c.fill=GridBagConstraints.NONE;
-			JButton bAll=new JButton("All");
-			bAll.addActionListener(new ActionListener() {		
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					// TODO Auto-generated method stub
-					for(int i=0;i<parent.getvFileMeta().size();i++){
-						parent.getvFileMeta().get(i).getMetaPanels().get(meta.getName()).setMetaValue(getMetaValue());
-					}
+		c.gridx=2;
+		c.weightx=0;
+		c.fill=GridBagConstraints.NONE;
+		bAll = new JButton("All");
+		bAll.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				for(int i=0;i<parent.getvFileMeta().size();i++){
+					parent.getvFileMeta().get(i).getMetaPanels().get(meta.getName()).setMetaValue(getMetaValue());
 				}
-			});
-			this.add(bAll,c);
-		}
-
+			}
+		});
+		this.add(bAll,c);
+		bAll.setVisible(showAllButton);
 	}
 
 	public String getMetaValue() {
@@ -138,8 +136,9 @@ public class MetaPanel extends JPanel{
 
 	public void updateValues(){
 		values.clear();
+		//Si on veut lister le choix des auteurs, il faut ajouter un nouveau champ
 		if(!meta.getName().trim().equalsIgnoreCase("titre_f")&&!meta.getName().trim().equalsIgnoreCase("titre_doc")&&!meta.getName().trim().equalsIgnoreCase("author_f")&&!meta.getName().trim().equalsIgnoreCase("date")){
-			FacetSearch fS=new FacetSearch(meta.getName());
+					FacetSearch fS=new FacetSearch(meta.getName());
 			if(fS.doSearch("","",FacetSearch.INDEX,-1)==FacetSearch.RESULTS){
 				for(String key:fS.getData().keySet()){
 					values.add(key);
@@ -168,5 +167,10 @@ public class MetaPanel extends JPanel{
 	 */
 	public String getDefaultValue() {
 		return this.defaultValue;
+	}
+	
+	public void showAllButton(boolean showAllButton){
+		bAll.setVisible(showAllButton);
+		paintAll(getGraphics());
 	}
 }
