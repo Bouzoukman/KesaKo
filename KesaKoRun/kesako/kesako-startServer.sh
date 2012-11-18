@@ -6,5 +6,5 @@
  # java -jar kesako-StartServer-311F2.1.jar #the command to launch the utility that launch the different server.#
  #                                                                                                              #
  ################################################################################################################
-java -jar kesako-StartServer-311F2.1.jar
+java -jar kesako-StartServer-311F8.1.jar
 read touche
