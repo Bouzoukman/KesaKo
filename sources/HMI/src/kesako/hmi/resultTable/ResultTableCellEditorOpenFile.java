@@ -17,9 +17,6 @@ package kesako.hmi.resultTable;
 
 
 import java.awt.Component;
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
@@ -27,7 +24,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import kesako.search.ResultDoc;
-import kesako.utilities.OSValidator;
+import kesako.utilities.FileUtilities;
 
 import org.apache.log4j.Logger;
 
@@ -49,18 +46,7 @@ public class ResultTableCellEditorOpenFile extends AbstractCellEditor implements
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		logger.debug(table.getModel().getValueAt(row, column) +" : "+ data.get(row).getFileURI());
-		try {
-			if(OSValidator.isWindows()){
-				//two different methods to open file if the OS is Windows.
-				Runtime.getRuntime().exec("cmd /c \""+data.get(row).getFileURI()+"\"");
-				//Runtime.getRuntime().exec("rundll32 SHELL32.DLL,ShellExec_RunDLL " + data.get(row).getFileURI());
-			}else{
-				//if Windows, the open method doesn't open network file.
-				Desktop.getDesktop().open(new File(data.get(row).getFileURI()));
-			}
-		} catch (IOException e) {
-			logger.fatal("Error open File : "+data.get(row).getFileURI(),e);
-		}
+		FileUtilities.openFile(data.get(row).getFileURI());
 		return null;
 	}
 

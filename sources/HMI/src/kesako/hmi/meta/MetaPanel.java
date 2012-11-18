@@ -137,7 +137,8 @@ public class MetaPanel extends JPanel{
 	public void updateValues(){
 		values.clear();
 		//Si on veut lister le choix des auteurs, il faut ajouter un nouveau champ
-		if(!meta.getName().trim().equalsIgnoreCase("titre_f")&&!meta.getName().trim().equalsIgnoreCase("titre_doc")&&!meta.getName().trim().equalsIgnoreCase("author_f")&&!meta.getName().trim().equalsIgnoreCase("date")){
+		//if(!meta.getName().trim().equalsIgnoreCase("titre_f")&&!meta.getName().trim().equalsIgnoreCase("titre_doc")&&!meta.getName().trim().equalsIgnoreCase("author_f")&&!meta.getName().trim().equalsIgnoreCase("date")){
+		if(!meta.getName().trim().equalsIgnoreCase("titre_f")&&!meta.getName().trim().equalsIgnoreCase("titre_doc")&&!meta.getName().trim().equalsIgnoreCase("date")){
 					FacetSearch fS=new FacetSearch(meta.getName());
 			if(fS.doSearch("","",FacetSearch.INDEX,-1)==FacetSearch.RESULTS){
 				for(String key:fS.getData().keySet()){

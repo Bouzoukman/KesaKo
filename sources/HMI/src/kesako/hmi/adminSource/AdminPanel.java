@@ -205,7 +205,7 @@ public class AdminPanel extends JPanel{
 			    	logger.debug("Sélection répertoire : "+chooser.getSelectedFile().getAbsolutePath());
 			    	labSourcePath.setText(chooser.getSelectedFile().getAbsolutePath());
 			    	if(txtSourceName.getText().trim().equalsIgnoreCase("< name of the new source >")){
-			    		if(separator=="\\"){
+			    		if(separator.equals("\\")){
 			    			separator="\\\\";
 			    		}
 			    		String[] temp=chooser.getSelectedFile().getAbsolutePath().split(separator);

@@ -102,25 +102,20 @@ public class ResultTable extends JTable {
 					searchPanel.showResults(0, false);
 				}
 			}
-
 			@Override
 			public void mousePressed(MouseEvent e) {
 				logger.debug(" header mouse pressed");					
 			}
-
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				logger.debug(" header mouse released");					
 			}
-
 			@Override
 			public void mouseEntered(MouseEvent e) {
 			}
-
 			@Override
 			public void mouseExited(MouseEvent e) {
 			}
-
 		});
 	}
 

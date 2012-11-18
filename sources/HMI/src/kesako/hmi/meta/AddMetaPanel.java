@@ -81,11 +81,11 @@ public class AddMetaPanel extends JPanel{
 				JList<String> jL=(JList<String>)e.getSource();
 				String temp = selectedMetaPanel.getMetaValue().trim();
 				if(jL.getSelectedValue()!=null && !temp.toLowerCase().contains(jL.getSelectedValue().toLowerCase())){
-					if(temp.equals("")){
-						selectedMetaPanel.setMetaValue(jL.getSelectedValue());
-					}else{
-						selectedMetaPanel.setMetaValue(temp+", "+jL.getSelectedValue());
+					if(!temp.endsWith(",")&&!temp.endsWith(";")&&!temp.equals("")){
+						temp+=",";
 					}
+					temp+=" "+jL.getSelectedValue();
+					selectedMetaPanel.setMetaValue(temp);
 				}
 			}
 

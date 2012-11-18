@@ -16,9 +16,12 @@
 package kesako.hmi.meta;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.TreeMap;
@@ -26,9 +29,11 @@ import java.util.Vector;
 
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -67,11 +72,11 @@ public class FileMetaPanel extends JPanel{
 
 	private Vector<String> metaValues;
 	
-	private String fileName;
+	private String filePath;
 
-	public FileMetaPanel (File f,AddMetaPanel parent,int flagColor,boolean first){
+	public FileMetaPanel (File f,AddMetaPanel parentMetaPanel,int flagColor,boolean first){
 		logger.debug("FileMetaPanel construction");
-		fileName=f.getAbsolutePath();
+		filePath=f.getAbsolutePath();
 		try {
 			Document doc=XMLUtilities.getXMLDocument("meta.xml");
 			rootMetaXML=doc.getDocumentElement();
@@ -85,7 +90,7 @@ public class FileMetaPanel extends JPanel{
 			cMeta.fill=GridBagConstraints.BOTH;
 			cMeta.gridheight=1;
 			cMeta.gridwidth=1;
-			cMeta.weightx=1;
+			cMeta.weightx=0;
 			cMeta.weighty=0;
 
 			//Meta list construction
@@ -104,13 +109,48 @@ public class FileMetaPanel extends JPanel{
 			vMetaPanels=new TreeMap<String,MetaPanel>();
 			vMetas=new Vector<Meta>();
 			cMeta.gridx=0;
+			cMeta.gridy=0;
+			this.add(new JLabel("Path"),cMeta);
+			cMeta.weightx=1;
+			cMeta.gridx=1;
+			JLabel lPath=new JLabel(filePath);
+			lPath.addMouseListener(new MouseListener(){
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					FileUtilities.openFile(filePath);
+				}
+				@Override
+				public void mouseEntered(MouseEvent arg0) {
+					JLabel l=((JLabel)arg0.getSource());
+					l.setBackground(UIManager.getDefaults().getColor("List.selectionBackground"));
+					l.setOpaque(true);
+					l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));	
+				}
+				@Override
+				public void mouseExited(MouseEvent arg0) {
+					JLabel l=((JLabel)arg0.getSource());
+					l.setBackground(l.getParent().getBackground());
+					l.setOpaque(false);
+					l.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+				}
+				@Override
+				public void mouseReleased(MouseEvent arg0) {
+				}
+			});
+			this.add(lPath,cMeta);
+			
 			int nbMeta;
+			cMeta.gridx=0;
+			cMeta.gridwidth=2;
 			for(nbMeta=0;nbMeta<listMetaXML.getLength();nbMeta++){
-				cMeta.gridy=nbMeta;
+				cMeta.gridy=nbMeta+1;
 				item=listMetaXML.item(nbMeta);
 				meta=new Meta(item);
 				if(meta.isVisibleInMetaPanel()){
-					mp=new MetaPanel(meta,parent,nbMeta%2,first);
+					mp=new MetaPanel(meta,parentMetaPanel,nbMeta%2,first);
 					if(meta.getName().trim().equalsIgnoreCase("date")){
 						mp.setInputVerifier(new DateVerifier());
 						mp.setDefaultValue("yyyy-mm-dd");
@@ -132,12 +172,12 @@ public class FileMetaPanel extends JPanel{
 
 	/**
 	 * Initiating values of meta-data. If multiple files are selected, meta-data are initiated by the first value of the meta-data. 
-	 * @param fileName
+	 * @param filePath
 	 */
 	public void initMeta(){
 		File fileMeta;
 		try {
-			String nomFicMeta=FileUtilities.getFileMetaName(fileName);
+			String nomFicMeta=FileUtilities.getFileMetaName(filePath);
 			String nomMeta,valueMeta;
 			logger.debug("nomFicMeta="+nomFicMeta);
 			fileMeta=new File(nomFicMeta);
@@ -210,7 +250,7 @@ public class FileMetaPanel extends JPanel{
 				metaXML.setAttribute("value",vMetaPanels.get(vMetas.get(i).getName()).getMetaValue());
 				rootXML.appendChild(metaXML);
 			}			
-			XMLUtilities.saveFileXML(docXML,FileUtilities.getFileMetaName(fileName));
+			XMLUtilities.saveFileXML(docXML,FileUtilities.getFileMetaName(filePath));
 		} catch (ParserConfigurationException e) {
 			logger.fatal("initXML ",e);
 		} catch (TransformerConfigurationException e) {

@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Class-Path: lib/log4j-1.2.16.jar lib/kesako-utilities-311F8.0.jar
+Class-Path: lib/log4j-1.2.16.jar lib/kesako-utilities-311F8.1.jar
 Main-Class: kesako.server.StartServer
 

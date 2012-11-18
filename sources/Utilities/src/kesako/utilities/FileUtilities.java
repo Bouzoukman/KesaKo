@@ -15,7 +15,9 @@
  */
 package kesako.utilities;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
@@ -114,5 +116,20 @@ public class FileUtilities {
 	public static String getFileMetaName(String nomFic){
 		String nomFicMeta=nomFic.substring(0,nomFic.lastIndexOf('.'));
 		return nomFicMeta=nomFicMeta+"_"+getExtension(nomFic)+".meta";
+	}
+	
+	public static void openFile(String filePath){
+		try {
+			if(OSValidator.isWindows()){
+				//two different methods to open file if the OS is Windows.
+				Runtime.getRuntime().exec("cmd /c \""+filePath+"\"");
+				//Runtime.getRuntime().exec("rundll32 SHELL32.DLL,ShellExec_RunDLL " + data.get(row).getFileURI());
+			}else{
+				//if Windows, the open method doesn't open network file.
+				Desktop.getDesktop().open(new File(filePath));
+			}
+		} catch (IOException e) {
+			logger.fatal("Error open File : "+filePath,e);
+		}
 	}
 }

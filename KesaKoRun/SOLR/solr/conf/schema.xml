@@ -529,7 +529,8 @@
 	
 	<!-- auteur -->
 	   <field name="author" type="text_general" indexed="true" stored="true" multiValued="false"/>
-	   <field name="author_f" type="text_general" indexed="true" stored="true" multiValued="true" required="true"/>
+	   <!--field name="author_f" type="text_general" indexed="true" stored="true" multiValued="true" required="true"/-->
+	   <field name="author_f" type="meta_data" indexed="true" stored="true" multiValued="true" required="true"/>
 	<!-- type de doc -->
 	   <field name="content_type" type="text_general" indexed="true" stored="true" multiValued="true"/>
 	
