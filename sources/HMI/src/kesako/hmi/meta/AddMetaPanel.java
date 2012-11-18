@@ -148,7 +148,6 @@ public class AddMetaPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				FileMetaPanel fMeta;
-				boolean showAllButton=false;
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				chooser.setMultiSelectionEnabled(true);
@@ -175,13 +174,13 @@ public class AddMetaPanel extends JPanel{
 					for(int i=0;i<chooser.getSelectedFiles().length;i++){
 						logger.debug("Sélection fichier : "+chooser.getSelectedFiles()[i].getAbsolutePath());
 						//show the button All only if this is the first file and if the number of file > 1
-						showAllButton= (i==0 && chooser.getSelectedFiles().length>1);
-						fMeta=new FileMetaPanel(chooser.getSelectedFiles()[i],me,nbFile%2,showAllButton);							
+						fMeta=new FileMetaPanel(chooser.getSelectedFiles()[i],me,nbFile%2,false);							
 						vFileMeta.add(fMeta);
 						jpFileMeta.add(fMeta);
 						fMeta.initMeta();
 						nbFile++;
 					}
+					vFileMeta.get(0).showAllButton(true);
 					add(jpMeta,BorderLayout.CENTER);
 					SwingUtilities.invokeLater(new Runnable(){
 						@Override

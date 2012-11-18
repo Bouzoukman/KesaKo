@@ -74,7 +74,7 @@ public class FileMetaPanel extends JPanel{
 	
 	private String filePath;
 
-	public FileMetaPanel (File f,AddMetaPanel parentMetaPanel,int flagColor,boolean first){
+	public FileMetaPanel (File f,AddMetaPanel parentMetaPanel,int flagColor,boolean showAllButton){
 		logger.debug("FileMetaPanel construction");
 		filePath=f.getAbsolutePath();
 		try {
@@ -150,7 +150,7 @@ public class FileMetaPanel extends JPanel{
 				item=listMetaXML.item(nbMeta);
 				meta=new Meta(item);
 				if(meta.isVisibleInMetaPanel()){
-					mp=new MetaPanel(meta,parentMetaPanel,nbMeta%2,first);
+					mp=new MetaPanel(meta,parentMetaPanel,nbMeta%2,showAllButton);
 					if(meta.getName().trim().equalsIgnoreCase("date")){
 						mp.setInputVerifier(new DateVerifier());
 						mp.setDefaultValue("yyyy-mm-dd");
@@ -270,6 +270,11 @@ public class FileMetaPanel extends JPanel{
 	 */
 	public TreeMap<String, MetaPanel> getMetaPanels() {
 		return this.vMetaPanels;
+	}
+	public void showAllButton(boolean showAllButton){
+		for(String key:vMetaPanels.keySet()){
+			vMetaPanels.get(key).showAllButton(showAllButton);
+		}
 	}
 /*################################################################################################################################################*/
 	private class DateVerifier extends InputVerifier{
