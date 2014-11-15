@@ -77,6 +77,10 @@ public class FileUtilities {
 				logger.debug("extension doc OK ");
 				return true;
 			}
+			if(extension.equals("docx")){
+				logger.debug("extension doc OK ");
+				return true;
+			}
 			if(extension.equals("ppt")){
 				logger.debug("extension ppt OK ");
 				return true;
