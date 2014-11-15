@@ -78,7 +78,7 @@ public class FileUtilities {
 				return true;
 			}
 			if(extension.equals("docx")){
-				logger.debug("extension doc OK ");
+				logger.debug("extension docx OK ");
 				return true;
 			}
 			if(extension.equals("ppt")){
@@ -86,7 +86,7 @@ public class FileUtilities {
 				return true;
 			}
 			if(extension.equals("pptx")){
-				logger.debug("extension ppt OK ");
+				logger.debug("extension pptx OK ");
 				return true;
 			}
 			if(extension.equals("pps")){
@@ -94,7 +94,7 @@ public class FileUtilities {
 				return true;
 			}
 			if(extension.equals("xlsx")){
-				logger.debug("extension xls OK ");
+				logger.debug("extension xlsx OK ");
 				return true;
 			}
 			if(extension.equals("xls")){
