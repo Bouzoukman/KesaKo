@@ -85,8 +85,16 @@ public class FileUtilities {
 				logger.debug("extension ppt OK ");
 				return true;
 			}
+			if(extension.equals("pptx")){
+				logger.debug("extension ppt OK ");
+				return true;
+			}
 			if(extension.equals("pps")){
 				logger.debug("extension pps OK ");
+				return true;
+			}
+			if(extension.equals("xlsx")){
+				logger.debug("extension xls OK ");
 				return true;
 			}
 			if(extension.equals("xls")){
