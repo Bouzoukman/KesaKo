@@ -1,1 +1,0 @@
-This repository store the version of SOLR and HSQLDB and icons used in Kes@Ko.
